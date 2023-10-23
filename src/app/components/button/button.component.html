@@ -1,1 +1,5 @@
-<button [ngStyle]="buttonConfig.styles" (click)="onClickButton($event)">{{ buttonConfig.label}}</button>
+<button [ngStyle]="buttonConfig.styles" 
+[ngClass] = "buttonClasses" 
+(click)="onClickButton($event)"
+(keydown.enter)="onClickButton($event)"
+>{{ buttonConfig.label}}</button>

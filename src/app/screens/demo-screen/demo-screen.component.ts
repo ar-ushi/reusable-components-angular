@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Button } from 'src/app/interface/Button';
+import { Button, buttonColor } from 'src/app/interface/Button';
 
 @Component({
   selector: 'app-demo-screen',
@@ -13,8 +13,6 @@ export class DemoScreenComponent {
     styles : {
       width : '150px',
       height: '60px',
-      backgroundColor: 'red',
-      color : 'white',
       fontFamily : 'sans-serif',
       fontSize: '20px',
       padding : '5px 5px 5px 5px',
@@ -22,6 +20,10 @@ export class DemoScreenComponent {
       border : 'none'
     },
     label : 'Testing'
+  }
+
+  color : buttonColor = {
+    bgColor : 'red',
   }
   
   buttonClicked(event:Event) {
