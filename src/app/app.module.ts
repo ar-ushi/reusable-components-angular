@@ -8,6 +8,7 @@ import { DemoScreenComponent } from './screens/demo-screen/demo-screen.component
 import { CardComponent } from './components/card/card.component';
 import { CardHeadingComponent } from './components/card/card-heading/card-heading.component';
 import { CardTitleComponent } from './components/card/card-heading/card-title/card-title.component';
+import { TooltipModule } from './components/tooltip/tooltip.module';
 
 
 @NgModule({
@@ -22,6 +23,7 @@ import { CardTitleComponent } from './components/card/card-heading/card-title/ca
   imports: [
     BrowserModule,
     AppRoutingModule,
+    TooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]

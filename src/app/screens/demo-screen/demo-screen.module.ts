@@ -8,7 +8,7 @@ import { ButtonComponent } from 'src/app/components/button/button.component';
 @NgModule({
   declarations: [
     DemoScreenComponent,
-    ButtonComponent
+    ButtonComponent,
   ],
   imports: [
     CommonModule,
