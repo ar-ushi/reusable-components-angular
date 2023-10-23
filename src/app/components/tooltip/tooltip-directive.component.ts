@@ -1,4 +1,4 @@
-import { ApplicationRef, ComponentRef, Directive, ElementRef, EmbeddedViewRef, HostListener, Injector, Input, ViewContainerRef} from '@angular/core';
+import { ComponentRef, Directive, ElementRef, HostListener, Input, ViewContainerRef} from '@angular/core';
 import { TooltipComponent } from './tooltip.component';
 
 @Directive({
@@ -7,13 +7,11 @@ import { TooltipComponent } from './tooltip.component';
 export class TooltipDirective{
 
   @Input() tooltip = '';
-
+  @Input() hideTooltip? : boolean | undefined = false;
   private componentRef: ComponentRef<any> | null = null;
 
   constructor(
 	private elementRef: ElementRef,
-	private appRef: ApplicationRef, 
-	private injector: Injector,
   public viewContainerRef : ViewContainerRef
   ) {
   }
@@ -27,11 +25,14 @@ export class TooltipDirective{
   private initializeToolTip() {
     //check if componentRef exists i.e does tooltip component exist - if not, instantiate it
     if (this.componentRef === null){
-      this.componentRef = this.viewContainerRef.createComponent(TooltipComponent, {injector : this.injector});
-      this.appRef.attachView(this.componentRef.hostView); //attach to VDOM
-      const domElem = (this.componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement; 
-      document.body.appendChild(domElem);
+      this.componentRef = this.viewContainerRef.createComponent(TooltipComponent);
       this.setTooltipProperties();
+      this.componentRef.changeDetectorRef.detectChanges();
+      document.body.appendChild(document.body.appendChild(this.componentRef.location.nativeElement)      );
+    } else {
+      if (this.componentRef !== null) {
+        this.componentRef.instance.hideTooltip = false; 
+      }
     }
   }
 
@@ -43,7 +44,9 @@ export class TooltipDirective{
 
   @HostListener('mouseleave') 
   onMouseLeave() : void {
-    this.destroy();
+    if (this.componentRef !== null) {
+    this.componentRef.instance.hideTooltip = true; 
+    }
   }
 
   ngOnDestroy() : void {
@@ -52,7 +55,7 @@ export class TooltipDirective{
 
   destroy() : void {
     if (this.componentRef !== null){
-      this.appRef.detachView(this.componentRef.hostView)
+      this.viewContainerRef.detach(this.viewContainerRef.indexOf(this.componentRef.hostView));
       this.componentRef.destroy();
       this.componentRef = null; //reinitalize for next instance
     }
