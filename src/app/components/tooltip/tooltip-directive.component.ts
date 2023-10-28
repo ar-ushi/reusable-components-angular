@@ -9,7 +9,9 @@ export class TooltipDirective{
   @Input() tooltip = '';
   @Input() hideTooltip? : boolean | undefined = false;
   @Input() position: 'above' | 'below' | 'right' | 'left' | 'default' = 'default';
-  private componentRef: ComponentRef<any> | null = null;
+  @Input() color : string = 'black'; //default color for tooltip will be black
+  private componentRef: ComponentRef<TooltipComponent> | null = null;
+  private componentPool : ComponentRef<TooltipComponent>[] = []; //component pool only for tooltip events
 
   constructor(
 	private elementRef: ElementRef,
@@ -25,14 +27,11 @@ export class TooltipDirective{
 
   private initializeToolTip() {
     //check if componentRef exists i.e does tooltip component exist - if not, instantiate it
-    if (this.componentRef === null){
-      this.componentRef = this.viewContainerRef.createComponent(TooltipComponent);
-      this.setTooltipProperties();
-      this.componentRef.changeDetectorRef.detectChanges();
+    if (this.componentPool.length <= 0){
+      this.createAndAttachTooltip();
     } else {
-      if (this.componentRef !== null) {
-        this.componentRef.instance.hideTooltip = false; 
-      }
+        this.componentRef = this.componentPool.pop()!;
+        this.setTooltipProperties()
     }
   }
 
@@ -40,45 +39,60 @@ export class TooltipDirective{
     if (this.componentRef !== null) {
       this.componentRef.instance.tooltip = this.tooltip;
       this.componentRef.instance.position = this.position;
-      const {left, right, top, bottom, height} = this.elementRef.nativeElement.getBoundingClientRect();
-      console.log(this.elementRef.nativeElement.getBoundingClientRect())
-      //include logic for setting position - two ways : set class 
-      switch (this.componentRef.instance.position) {
-        case 'below' :{
-          this.componentRef.instance.left = Math.round((left + (right-left)/2));
-          break;
-        }
-        case 'above' : {
-            this.componentRef.instance.left = Math.round(left +(right-left)/2);
-            this.componentRef.instance.top = Math.round(top);
-            break;
-        }
-        case 'right' :{
-          this.componentRef.instance.left = Math.round(right);
-          this.componentRef.instance.top = Math.round(top + (bottom - top) / 2);
-          break;
-        }
-        case 'left' :{
-          this.componentRef.instance.left = Math.round(left);
-          this.componentRef.instance.top = Math.round(top + (bottom - top) / 2);
-          break;
-        }
-        case 'default' : {
-          break;
-        }
-      }
+      this.componentRef.instance.color = this.color;
+      this.setPositionTooltip(this.componentRef.instance.position);
     }
   }
 
-  /*@HostListener('mouseleave') 
+  setPositionTooltip(pos : string){
+    const {left, right, top, bottom} = this.elementRef.nativeElement.getBoundingClientRect();
+    switch (pos) {
+      case 'below' :{
+        this.componentRef!.instance.left = Math.round((left + (right-left)/2));
+        break;
+      }
+      case 'above' : {
+          this.componentRef!.instance.left = Math.round(left +(right-left)/2);
+          this.componentRef!.instance.top = Math.round(top);
+          break;
+      }
+      case 'right' :{
+        this.componentRef!.instance.left = Math.round(right);
+        this.componentRef!.instance.top = Math.round(top + (bottom - top) / 2);
+        break;
+      }
+      case 'left' :{
+        this.componentRef!.instance.left = Math.round(left);
+        this.componentRef!.instance.top = Math.round(top + (bottom - top) / 2);
+        break;
+      }
+      case 'default' : {
+        break;
+      }
+    }
+
+  }
+
+  @HostListener('mouseleave') 
   onMouseLeave() : void {
     if (this.componentRef !== null) {
-    this.componentRef.instance.hideTooltip = true; 
-    }
-  }*/
+      if (this.componentPool.length < 10){
+        // Place the component back in the pool
+        this.componentRef.instance.tooltip = '';
+        this.componentPool.push(this.componentRef);
+      }
+        this.componentRef = null; // Reset the reference 
+  }
+}
+
+createAndAttachTooltip() {
+  this.componentRef = this.viewContainerRef.createComponent(TooltipComponent);
+  this.setTooltipProperties();
+  this.componentRef.changeDetectorRef.detectChanges();
+}
 
   ngOnDestroy() : void {
-    this.destroy(); //remove tooltip when host comp destroyed to prevent memoryleaks
+    this.destroy(); // prevent memoryleaks
   }
 
   destroy() : void {

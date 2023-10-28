@@ -34,7 +34,7 @@ export class ButtonComponent {
 @Input() buttonConfig : ButtonStyles = {};
 @Input() expand? : string = '';
 @Input() size? : string = '';
-@Input() color? : buttonColor = {};
+@Input() btncolor? : buttonColor = {};
 @Input() label? : string = '';
 @Input() fill? : string = 'default';
 @Output() onClick = new EventEmitter<any>();
@@ -73,16 +73,16 @@ get buttonStyles() {
         ...this.buttonConfig,
         border: 'none',
         backgroundColor: 'white',
-        color : this.color?.bgColor
+        color : this.btncolor?.bgColor
       } : (this.fill && this.fill == buttonFill.outline) ? {
         ...this.buttonConfig,
-        border : `2px solid ${this.color?.bgColor}`,
+        border : `2px solid ${this.btncolor?.bgColor}`,
         backgroundColor : 'white',
-        color : this.color?.bgColor
+        color : this.btncolor?.bgColor
       } :  {
         ...this.buttonConfig,
-        backgroundColor: this.color?.bgColor,
-        color : this.color?.txtColor,
+        backgroundColor: this.btncolor?.bgColor,
+        color : this.btncolor?.txtColor,
       }
   }
 }

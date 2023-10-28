@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import { Component, ElementRef} from '@angular/core';
 
 @Component({
   selector: 'tooltip',
@@ -11,7 +11,10 @@ export class TooltipComponent {
  position: 'above' | 'below' | 'right' | 'left' | 'default' = 'default';
  left = 0;
  top = 0;
-  constructor() {}
+ color : string = 'black';
+  constructor(private el : ElementRef) {}
 
-  ngOnInit() : void {}
+  ngOnInit() {
+    this.el.nativeElement.style.setProperty('--tooltip-background-color', this.color);
+  }
 }

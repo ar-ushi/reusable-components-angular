@@ -1,6 +1,8 @@
 <app-button [buttonConfig] = "buttonConfig" size='xl' expand = 'expand' 
-label = 'hello' fill="outline" [color]="color" 
-(onClick) = "buttonClicked($event)" [tooltip]="'work'" position = 'left'/>
+label = 'hello' fill="outline" [btncolor]="color" 
+(onClick) = "buttonClicked($event)" [tooltip]="'workwo '" position = 'right' color = '#abe300'/>
 <div *ngIf =buttonCon [innerHTML]="buttonCon" ></div>
 <br />
-<app-button label="'testing" (onClick) = "buttonClicked($event)" [tooltip]="'btn2'" position = 'right'/>
+<app-button label="'testing"
+ (onClick) = "buttonClicked($event)" 
+ [tooltip]="'btn2'" position = 'right'/>
