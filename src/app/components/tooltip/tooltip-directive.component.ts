@@ -7,9 +7,10 @@ import { TooltipComponent } from './tooltip.component';
 export class TooltipDirective{
 
   @Input() tooltip = '';
-  @Input() hideTooltip? : boolean | undefined = false;
-  @Input() position: 'above' | 'below' | 'right' | 'left' | 'default' = 'default';
+  @Input() position: 'above' | 'below' | 'right' | 'left' =  'below';
   @Input() color : string = 'black'; //default color for tooltip will be black
+  @Input() transition? : 'fade-in' | 'fade-out' | 'none' = 'none';
+  @Input() duration? : number = 1; //setting default as 1ms
   private componentRef: ComponentRef<TooltipComponent> | null = null;
   private componentPool : ComponentRef<TooltipComponent>[] = []; //component pool only for tooltip events
 
@@ -40,14 +41,25 @@ export class TooltipDirective{
       this.componentRef.instance.tooltip = this.tooltip;
       this.componentRef.instance.position = this.position;
       this.componentRef.instance.color = this.color;
+      this.componentRef.instance.duration = this.duration;
+      this.componentRef.instance.transition = this.transition;
       this.setPositionTooltip(this.componentRef.instance.position);
+      this.closeTooltip(this.componentRef.instance.duration!);
     }
   }
+
+closeTooltip(time : number){
+  if (time != 1){
+    setTimeout(() => {
+      this.pushAndHideTooltip();}, time)
+  }
+}
 
   setPositionTooltip(pos : string){
     const {left, right, top, bottom} = this.elementRef.nativeElement.getBoundingClientRect();
     switch (pos) {
-      case 'below' :{
+      case 'below' :
+      {
         this.componentRef!.instance.left = Math.round((left + (right-left)/2));
         break;
       }
@@ -66,25 +78,25 @@ export class TooltipDirective{
         this.componentRef!.instance.top = Math.round(top + (bottom - top) / 2);
         break;
       }
-      case 'default' : {
-        break;
-      }
     }
 
   }
 
-  @HostListener('mouseleave') 
+@HostListener('mouseleave') 
   onMouseLeave() : void {
-    if (this.componentRef !== null) {
-      if (this.componentPool.length < 10){
-        // Place the component back in the pool
-        this.componentRef.instance.tooltip = '';
-        this.componentPool.push(this.componentRef);
-      }
-        this.componentRef = null; // Reset the reference 
-  }
+    this.pushAndHideTooltip();
 }
 
+pushAndHideTooltip() {
+  if (this.componentRef !== null) {
+    if (this.componentPool.length < 10){
+      // Place the component back in the pool
+      this.componentRef.instance.tooltip = '';
+      this.componentPool.push(this.componentRef);
+    }
+      this.componentRef = null; // Reset the reference 
+}
+}
 createAndAttachTooltip() {
   this.componentRef = this.viewContainerRef.createComponent(TooltipComponent);
   this.setTooltipProperties();

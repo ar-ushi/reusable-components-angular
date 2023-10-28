@@ -9,6 +9,7 @@ import { CardComponent } from './components/card/card.component';
 import { CardHeadingComponent } from './components/card/card-heading/card-heading.component';
 import { CardTitleComponent } from './components/card/card-heading/card-title/card-title.component';
 import { TooltipModule } from './components/tooltip/tooltip.module';
+import { DropdownComponent } from './components/dropdown/dropdown.component';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { TooltipModule } from './components/tooltip/tooltip.module';
     CardComponent,
     CardHeadingComponent,
     CardTitleComponent,
+    DropdownComponent,
   ],
   imports: [
     BrowserModule,
