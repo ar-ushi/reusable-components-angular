@@ -1,1 +1,13 @@
-<p>dropdown works!</p>
+<div tabindex="0">
+    <div [class.disabled]="disabled">
+      <span tabindex="-1">
+        <span>{{placeholder}}</span>
+        <ul>
+            <li *ngFor="let item of data; let i = index;" (click)="clickOption($event,item)">
+              <input type="checkbox" [attr.aria-label]="item"  />
+              <div>{{item}}</div>
+            </li>
+        </ul>
+    </span>
+    </div>
+</div>

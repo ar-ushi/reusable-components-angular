@@ -7,4 +7,6 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'client';
+  fruits: string[] = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
+
 }

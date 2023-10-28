@@ -11,7 +11,6 @@ import { CardTitleComponent } from './components/card/card-heading/card-title/ca
 import { TooltipModule } from './components/tooltip/tooltip.module';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,12 +19,12 @@ import { DropdownComponent } from './components/dropdown/dropdown.component';
     CardComponent,
     CardHeadingComponent,
     CardTitleComponent,
-    DropdownComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    TooltipModule
+    TooltipModule,
+    DropdownComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
