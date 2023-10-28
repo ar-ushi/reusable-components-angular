@@ -8,7 +8,9 @@ import { Component} from '@angular/core';
 export class TooltipComponent {
  tooltip: string = '';
  hideTooltip: boolean = false;
-
+ position: 'above' | 'below' | 'right' | 'left' | 'default' = 'default';
+ left = 0;
+ top = 0;
   constructor() {}
 
   ngOnInit() : void {}

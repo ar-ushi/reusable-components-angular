@@ -1,3 +1,5 @@
-<div class="tooltip" [ngClass] = "{'hide-tooltip' : hideTooltip, 'tooltip': !hideTooltip}">
+<div class="tooltip"
+ [ngClass] = "['tooltip--'+position]"
+ [style.left] = "left +'px'" [style.top]= "top !== 0 ? top + 'px' : 'auto'">
   {{tooltip}}
 </div>

@@ -1,7 +1,3 @@
-export interface Button{
-    styles? : ButtonStyles,
-    label?: string,
-}
 
 export interface ButtonStyles{
     position?: string,

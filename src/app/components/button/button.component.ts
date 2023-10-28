@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
-import { Button, buttonColor } from 'src/app/interface/Button';
+import { Component, EventEmitter, Input, Output} from '@angular/core';
+import { ButtonStyles, buttonColor } from 'src/app/interface/Button';
 
 enum block{
   expand = "expand",
@@ -31,10 +31,11 @@ enum buttonFill{
 
 export class ButtonComponent {
 
-@Input() buttonConfig : Button = {};
+@Input() buttonConfig : ButtonStyles = {};
 @Input() expand? : string = '';
 @Input() size? : string = '';
 @Input() color? : buttonColor = {};
+@Input() label? : string = '';
 @Input() fill? : string = 'default';
 @Output() onClick = new EventEmitter<any>();
 buttonClasses : any[] = [];
@@ -56,8 +57,8 @@ get buttonStyles() {
 
   ngonInit() {
     //setting default styles if not provided by parent
-    if (!this.buttonConfig.styles){
-    this.buttonConfig.styles = {
+    if (!this.buttonConfig){
+    this.buttonConfig = {
         width : '150px',
         height: '20px',
         fontFamily : 'sans-serif',
@@ -68,18 +69,18 @@ get buttonStyles() {
   }
 
   ngOnChanges() {
-      (this.buttonConfig.styles as any)=  (this.fill && this.fill == buttonFill.clear) ? {
-        ...this.buttonConfig.styles,
+      (this.buttonConfig as any)=  (this.fill && this.fill == buttonFill.clear) ? {
+        ...this.buttonConfig,
         border: 'none',
         backgroundColor: 'white',
         color : this.color?.bgColor
       } : (this.fill && this.fill == buttonFill.outline) ? {
-        ...this.buttonConfig.styles,
+        ...this.buttonConfig,
         border : `2px solid ${this.color?.bgColor}`,
         backgroundColor : 'white',
         color : this.color?.bgColor
       } :  {
-        ...this.buttonConfig.styles,
+        ...this.buttonConfig,
         backgroundColor: this.color?.bgColor,
         color : this.color?.txtColor,
       }
