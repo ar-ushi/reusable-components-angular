@@ -1,4 +1,3 @@
-To-D0 -
+To-Do -
 
 1. Fix btn size
-2. remove excessive enums - use pipes instead
