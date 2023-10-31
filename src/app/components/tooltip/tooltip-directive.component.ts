@@ -4,13 +4,13 @@ import { TooltipComponent } from './tooltip.component';
 @Directive({
   selector: '[tooltip]',
 })
-export class TooltipDirective{
+export class TooltipDirective {
 
   @Input() tooltip = '';
   @Input() position: 'above' | 'below' | 'right' | 'left' =  'below';
   @Input() color : string = 'black'; //default color for tooltip will be black
   @Input() transition? : 'fade-in' | 'fade-out' | 'none' = 'none';
-  @Input() duration? : number = 1; //setting default as 1ms
+  @Input() duration? : number = undefined; //setting default as 1ms
   private componentRef: ComponentRef<TooltipComponent> | null = null;
   private componentPool : ComponentRef<TooltipComponent>[] = []; //component pool only for tooltip events
 
@@ -41,7 +41,7 @@ export class TooltipDirective{
       this.componentRef.instance.tooltip = this.tooltip;
       this.componentRef.instance.position = this.position;
       this.componentRef.instance.color = this.color;
-      this.componentRef.instance.duration = this.duration;
+      this.componentRef.instance.duration= this.duration;
       this.componentRef.instance.transition = this.transition;
       this.setPositionTooltip(this.componentRef.instance.position);
       this.closeTooltip(this.componentRef.instance.duration!);
@@ -49,7 +49,7 @@ export class TooltipDirective{
   }
 
 closeTooltip(time : number){
-  if (time != 1){
+  if (time != undefined){
     setTimeout(() => {
       this.pushAndHideTooltip();}, time)
   }

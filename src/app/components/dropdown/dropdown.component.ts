@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, ElementRef } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, EventEmitter, Input, Output, ElementRef, forwardRef } from '@angular/core';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { DropDownConfig } from './dropdown.interface';
+
 
 @Component({
   selector: 'app-dropdown',
@@ -10,14 +12,21 @@ import { BrowserModule } from '@angular/platform-browser';
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.scss']
 })
-export class DropdownComponent {
+export class DropdownComponent{
 
-  
 data : Array<any> = [];
 _placeholder:string = 'Select';
+_config: DropDownConfig = {
+  defaultOpen: false,
+  backgroundColor: '#ffff12',
+  textColor: "#111111",
+  dropdownWidth: '100%',
+  dropdownShadow: '0px 1px 3px #959595',
+}
 @Input() color? :  string = 'white';
 @Input() defaultOption? :  string | null = null;
 @Input() multiple? : boolean = false;
+@Input() disabled?: boolean = false;
 selectedOption: string = '';
 
 @Input()
@@ -26,17 +35,19 @@ set placeholder(value:string){
 }
 
 @Input()
-set disabled(val : boolean){
-  this.disabled = val ? val : false;
-}
-@Input()
 set options(value : Array<any>){
   if (!value){
     this.data = [];
   } else {
-    this.data.push(...value); //for simple datatypes - modify code to allow for objects
+    this.data.push(...value); //TODO - for simple datatypes - modify code to allow for objects
   }
 }
+
+@Input()
+public set ddconfig(value : DropDownConfig){
+  this._config = value ? value : this._config;
+}
+
 @Output() onSelect= new EventEmitter<string>();
 @Output() onDeselect= new EventEmitter<string>();
 @Output() onCloseDropdown= new EventEmitter<string>();
@@ -49,7 +60,25 @@ set options(value : Array<any>){
     if (this.defaultOption && this.defaultOption in this.options){
       this.selectedOption = this.defaultOption!;
       }
-    this.el.nativeElement.style.setProperty('--dropdown-background-color', this.color);
+    this.setDropDownStyles();
+  }
+
+  setDropDownStyles(){
+  (document.getElementsByClassName('dropdown').item(0) as HTMLElement).style.cssText = `
+    background-color : ${this._config.backgroundColor};
+    color: ${this._config.textColor};
+    width: ${this._config.dropdownWidth}
+    `;
+    //inherit background color to child
+    const childElements = document.querySelectorAll('.dropdown *');
+    childElements.forEach((child) => {
+      (child as HTMLElement).style.backgroundColor = 'inherit';
+    });
+    //set dropdown list styles
+    (document.getElementsByClassName('dropdown-data').item(0) as HTMLElement).style.cssText = `
+    box-shadow: ${this._config.dropdownShadow};
+    background-color: inherit;
+    `;
   }
 
   clickOption($event:any, item:any){
@@ -57,20 +86,34 @@ set options(value : Array<any>){
     const isItemPresent = this.selectedOption === item ? true : false;
     if (!isItemPresent){
       this.selectedOption = item;
-      this.onSelect.emit(emittedValue(item));
+      
+      this.onSelect.emit(this.emittedValue(item));
     } else{
       this.selectedOption = '';
-      this.onDeselect.emit(emittedValue(item));
+      this.onDeselect.emit(this.emittedValue(item));
         }
-    closeDropdown();
+    this.closeDropdown();
   }
-}
 
 
-function emittedValue(item: any) {
-return item;
-}
+  emittedValue(item: any) {
+  return item;
+  }
 
-function closeDropdown() {
-  console.log("dropdown")
+  toggleDropdown(evt: Event){
+    evt.preventDefault();
+    if (this.disabled) return;
+    //maintain a state for dropdown close vs dropdown open
+    this._config.defaultOpen = !this._config.defaultOpen;
+    if(!this._config.defaultOpen){
+      this.onCloseDropdown.emit();
+    }
+  }
+
+  closeDropdown() {
+    this._config.defaultOpen = false;
+    console.log("dropdown");
+    this.onCloseDropdown.emit();
+  }
+
 }
