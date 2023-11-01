@@ -2,16 +2,16 @@
     <div [class.disabled]="disabled">
       <span tabindex="-1" class="dropdown-btn" (click)="toggleDropdown($event)">
         <span>
-          <span [hidden]="selectedOption">{{_placeholder}}</span>
-          <span [hidden]="!selectedOption" (click) = "removeSelected(selectedOption); $event.stopPropagation()" class="close-btn">
+          <span [hidden]="selectedOptions.length > 0">{{_placeholder}}</span>
+          <span [hidden]="selectedOptions.length == 0" (click) = "removeSelectedOptions(selectedOptions); $event.stopPropagation()" class="close-btn">
             <ng-container *ngIf="_config.closeIconSrc; else defaultClose">
               <img [src]="_config.closeIconSrc" alt="Close Dropdown"/>
             </ng-container>
             <ng-template #defaultClose>&times;</ng-template>
           </span>
           <span class="selected-option-container">
-            <span class="selected-item">
-              <span>{{selectedOption}}</span>
+            <span class="selected-item" *ngFor="let option of selectedOptions">
+              <span>{{option.text}}&nbsp;</span>
             </span>
           </span>
         </span>
@@ -19,8 +19,8 @@
         <div [hidden] = "!_config.defaultOpen"class="dropdown-data">
             <ul>
                 <li *ngFor="let item of data; let i = index;" (click)="clickOption($event,item)" class="item-checkbox">
-                  <input type=checkbox [attr.aria-label]="item"  />
-                  <div>{{item}}</div>
+                  <input type=checkbox [attr.aria-label]="item" [checked] = "item.selected" />
+                  <div>{{item.text}}</div>
                 </li>
             </ul>
         </div>

@@ -1,8 +1,8 @@
 <app-demo-screen />
 <div style='padding : 50px'>
     <app-dropdown [options] = 'fruits'
-    [(ngModel)] = "selected" 
     placeholder="Fruit List"
+    [(ngModel)] = "selected"
     (onSelect) = "onSelected($event)"
     [ddconfig] = "dropdownConfig"
     />
