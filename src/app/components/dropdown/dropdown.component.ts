@@ -48,7 +48,6 @@ set options(value : Array<any>){
   } else {
     this.data = value.map((item: any) => new DropdownItem(item))
   }
-  console.log(this.data);
 }
 
 @Input()
@@ -173,9 +172,8 @@ onTouch = () => {};
   registerOnTouched(fn: any): void {
     this.onTouch = fn;
   }
-
+  
   setDisabledState(isDisabled: boolean): void {
-    
   }
 
 }
