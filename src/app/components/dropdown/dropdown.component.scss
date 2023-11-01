@@ -18,6 +18,14 @@
         cursor: pointer;
         border-radius: 4px;
     }
+    .close-btn{
+      left: 100%;
+      position: absolute;
+      opacity: 0.3;
+    }
+    .close-btn:hover{
+      opacity: 1;
+    }
     .dropdown-data{
         position: absolute;
         padding: 6px 12px;
@@ -34,6 +42,7 @@
         }
         li {
             padding: 6px 10px;
+            padding-left: 0px;
             cursor: pointer;
             text-align: left;
         }

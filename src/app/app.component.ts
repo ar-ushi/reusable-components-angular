@@ -9,6 +9,9 @@ export class AppComponent {
   title = 'client';
   fruits: string[] = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
   selected: string = 'Apple';
+  dropdownConfig : any = {
+    backgroundColor: '#ffff13',
+  }
 
   onSelected(val : any){
     console.log(val);

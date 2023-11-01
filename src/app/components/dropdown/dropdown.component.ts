@@ -28,6 +28,7 @@ _config: DropDownConfig = {
   textColor: "#111111",
   dropdownWidth: '100%',
   dropdownShadow: '0px 1px 3px #959595',
+  closeIconSrc: ''
 }
 @Input() color? :  string = 'white';
 @Input() defaultOption? :  string | null = null;
@@ -50,8 +51,9 @@ set options(value : Array<any>){
 }
 
 @Input()
-public set ddconfig(value : DropDownConfig){
-  this._config = value ? value : this._config;
+public set ddconfig(obj : DropDownConfig){
+  //only override defaults for value sent by parent
+  this._config= {...this._config, ...obj};
 }
 
 @Output() onSelect= new EventEmitter<string>();
@@ -97,9 +99,14 @@ onTouch = () => {};
       this.onChange(this.selectedOption);
       this.onSelect.emit(item);
     } else{
-      this.selectedOption = '';
-      this.onDeselect.emit(item);
+      this.removeSelected(item);
         }
+    this.closeDropdown();
+  }
+
+  removeSelected(item : any){
+    this.selectedOption = '';
+    this.onDeselect.emit(item);
     this.closeDropdown();
   }
 
@@ -121,12 +128,13 @@ onTouch = () => {};
   //form control input funcs 
   
   writeValue(obj: any): void {
-    if (obj && obj.length > 0){
+    if (obj && obj.length > 0 && this.data.filter(val => {val == obj ? true : false})){
       //for default value set by parent
       this.selectedOption = obj;
       this.onChange(obj);
+    } else {
+      console.log(Error); //TODO - Find a better way of showing error to parent
     }
-    console.log('i do nothing')
   }
 
   registerOnChange(fn: any): void {
