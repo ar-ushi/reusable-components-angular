@@ -1,24 +1,30 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, ElementRef, forwardRef } from '@angular/core';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { DropDownConfig } from './dropdown.interface';
 
+export const DropdownControlValueAccessor : any ={
+  provide: NG_VALUE_ACCESSOR,
+  useExisting: forwardRef(() => DropdownComponent),
+  multi: true
+}
 
 @Component({
   selector: 'app-dropdown',
   standalone: true,
-  imports : [CommonModule, BrowserModule, FormsModule, ReactiveFormsModule],
+  providers: [DropdownControlValueAccessor],
+  imports : [CommonModule, BrowserModule, FormsModule],
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.scss']
 })
-export class DropdownComponent{
+export class DropdownComponent implements ControlValueAccessor{
 
 data : Array<any> = [];
 _placeholder:string = 'Select';
 _config: DropDownConfig = {
   defaultOpen: false,
-  backgroundColor: '#ffff12',
+  backgroundColor: '#ffffff',
   textColor: "#111111",
   dropdownWidth: '100%',
   dropdownShadow: '0px 1px 3px #959595',
@@ -52,7 +58,9 @@ public set ddconfig(value : DropDownConfig){
 @Output() onDeselect= new EventEmitter<string>();
 @Output() onCloseDropdown= new EventEmitter<string>();
 
-
+//Function to call on change & touch 
+onChange = (_:any) => {};
+onTouch = () => {};
   
   constructor(private el : ElementRef) {};
 
@@ -62,7 +70,7 @@ public set ddconfig(value : DropDownConfig){
       }
     this.setDropDownStyles();
   }
-
+  
   setDropDownStyles(){
   (document.getElementsByClassName('dropdown').item(0) as HTMLElement).style.cssText = `
     background-color : ${this._config.backgroundColor};
@@ -86,18 +94,13 @@ public set ddconfig(value : DropDownConfig){
     const isItemPresent = this.selectedOption === item ? true : false;
     if (!isItemPresent){
       this.selectedOption = item;
-      
-      this.onSelect.emit(this.emittedValue(item));
+      this.onChange(this.selectedOption);
+      this.onSelect.emit(item);
     } else{
       this.selectedOption = '';
-      this.onDeselect.emit(this.emittedValue(item));
+      this.onDeselect.emit(item);
         }
     this.closeDropdown();
-  }
-
-
-  emittedValue(item: any) {
-  return item;
   }
 
   toggleDropdown(evt: Event){
@@ -112,8 +115,30 @@ public set ddconfig(value : DropDownConfig){
 
   closeDropdown() {
     this._config.defaultOpen = false;
-    console.log("dropdown");
     this.onCloseDropdown.emit();
+  }
+
+  //form control input funcs 
+  
+  writeValue(obj: any): void {
+    if (obj && obj.length > 0){
+      //for default value set by parent
+      this.selectedOption = obj;
+      this.onChange(obj);
+    }
+    console.log('i do nothing')
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouch = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    
   }
 
 }

@@ -2,8 +2,8 @@
     position: relative;
     font-size: inherit;
     font-family: inherit;
-    .dropdown *{
-      background-color: inherit;
+    .disabled{
+      opacity: 0.25;
     }
     .dropdown-btn{
         display:inline-block;

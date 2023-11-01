@@ -10,6 +10,7 @@ import { CardHeadingComponent } from './components/card/card-heading/card-headin
 import { CardTitleComponent } from './components/card/card-heading/card-title/card-title.component';
 import { TooltipModule } from './components/tooltip/tooltip.module';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { DropdownComponent } from './components/dropdown/dropdown.component';
     BrowserModule,
     AppRoutingModule,
     TooltipModule,
-    DropdownComponent
+    DropdownComponent,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
