@@ -36,7 +36,7 @@ export class ButtonComponent {
 @Input() size? : string = '';
 @Input() btncolor? : buttonColor = {};
 @Input() label? : string = '';
-@Input() fill? : string = 'default';
+@Input() fill? : 'default' | 'clear' | 'outline' | 'solid' = 'default';
 @Output() onClick = new EventEmitter<any>();
 buttonClasses : any[] = [];
 

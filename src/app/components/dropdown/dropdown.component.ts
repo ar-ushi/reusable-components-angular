@@ -24,7 +24,6 @@ data : Array<any> = [];
 _placeholder:string = 'Select';
 _config: DropDownConfig = {
   defaultOpen: false,
-  backgroundColor: '#ffffff',
   textColor: "#111111",
   width: '100%',
   shadow: '0px 1px 3px #959595',
@@ -34,6 +33,7 @@ _config: DropDownConfig = {
 }
 @Input() color? :  string = 'white';
 @Input() disabled?: boolean = false;
+@Input() fill? : 'default' | 'clear' | 'outline' | 'solid' = 'default';
 selectedOptions: Array<DropdownItem>  = [];
 
 @Input()
@@ -73,11 +73,26 @@ onTouch = () => {};
   }
   
   setDropDownStyles(){
+    let border, txtColor;
+
+    if (this.fill && (this.fill === 'clear' ||  this.fill === 'outline')) {
+      if (this.fill === 'clear') border = 'none';
+      else if (this.fill === 'outline') border = `2px solid ${this.color}`;
+      txtColor = this.color != 'white' ? this.color : this._config.textColor;
+      this.color = 'white';
+    } else {
+      txtColor = this._config.textColor;
+    }
   (document.getElementsByClassName('dropdown').item(0) as HTMLElement).style.cssText = `
-    background-color : ${this._config.backgroundColor};
-    color: ${this._config.textColor};
+    background-color : ${this.color};
+    color: ${txtColor};
     width: ${this._config.width}
     `;
+
+    (document.getElementsByClassName('dropdown-btn').item(0) as HTMLElement).style.cssText = `
+    border : ${border};
+    `;
+
     //inherit background color to child
     const childElements = document.querySelectorAll('.dropdown *');
     childElements.forEach((child) => {
@@ -87,6 +102,8 @@ onTouch = () => {};
     (document.getElementsByClassName('dropdown-data').item(0) as HTMLElement).style.cssText = `
     box-shadow: ${this._config.shadow};
     background-color: inherit;
+    border: ${border};
+    color: ${txtColor}
     `;
   }
 
@@ -122,7 +139,11 @@ onTouch = () => {};
     if (!this._config.multipleSelection){
       this.selectedOptions = [];
     } else {
-      this.selectedOptions.splice(this.selectedOptions.indexOf(item),1);
+      // two cases - can be an array (default option sent by parent) 
+      if (Array.isArray(item)) {
+        item = this.selectedOptions[this.selectedOptions.length-1];
+        this.selectedOptions.pop();
+      } else this.selectedOptions.splice(this.selectedOptions.indexOf(item),1);
     }
     this.toggleSelection(item)
     this.onDeselect.emit(item);
@@ -154,7 +175,6 @@ onTouch = () => {};
 
   addDefaultOptiontoSelection(obj : Array<DropdownItem>){
     const parentValueIds = obj.map((item) => item.id);
-    console.log(parentValueIds);
     this.data.forEach((item) => {
       for (const i in parentValueIds){
         const val = parentValueIds[i];
