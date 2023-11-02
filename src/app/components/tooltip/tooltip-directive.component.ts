@@ -57,6 +57,8 @@ closeTooltip(time : number){
 
   setPositionTooltip(pos : string){
     const {left, right, top, bottom} = this.elementRef.nativeElement.getBoundingClientRect();
+    //account for inline styles to tooltip
+    const {leftOffset, paddingLeft, topOffset, paddingTop, rightOffset, paddingRight} = this.setPositionsbyInlineStyles();
     switch (pos) {
       case 'below' :
       {
@@ -65,27 +67,41 @@ closeTooltip(time : number){
       }
       case 'above' : {
           this.componentRef!.instance.left = Math.round(left +(right-left)/2);
-          this.componentRef!.instance.top = Math.round(top);
+          this.componentRef!.instance.top = Math.round(top - topOffset + paddingTop);
           break;
       }
       case 'right' :{
-        this.componentRef!.instance.left = Math.round(right);
+        this.componentRef!.instance.left = Math.round(right - rightOffset - paddingRight);
         this.componentRef!.instance.top = Math.round(top + (bottom - top) / 2);
         break;
       }
       case 'left' :{
-        this.componentRef!.instance.left = Math.round(left);
-        this.componentRef!.instance.top = Math.round(top + (bottom - top) / 2);
+        this.componentRef!.instance.left = Math.round(left + paddingLeft + leftOffset);
+        this.componentRef!.instance.top = Math.round((top + (bottom - top) / 2));
         break;
       }
     }
-
   }
 
-@HostListener('mouseleave') 
-  onMouseLeave() : void {
-    this.pushAndHideTooltip();
-}
+  setPositionsbyInlineStyles(){
+    const computedStyles= window.getComputedStyle(this.elementRef.nativeElement);
+    //calculate offset and padding for left
+    const leftOffset = parseInt(this.elementRef.nativeElement.style.left, 10) || 0;
+    const paddingLeft = parseInt(computedStyles.paddingLeft, 10) || 0;
+    //const offset and padding for right
+    const rightOffset = parseInt(this.elementRef.nativeElement.style.right, 10) || 0;
+    const paddingRight = parseInt(computedStyles.paddingRight, 10) || 0;
+    //calculate offset and padding for top
+    const topOffset = parseInt(this.elementRef.nativeElement.style.top, 10) || 0;
+    const paddingTop= parseInt(computedStyles.paddingTop, 10) || 0;
+
+      return {leftOffset, paddingLeft, topOffset, paddingTop, rightOffset, paddingRight}
+  }
+
+//@HostListener('mouseleave') 
+  //onMouseLeave() : void {
+    //this.pushAndHideTooltip();
+
 
 pushAndHideTooltip() {
   if (this.componentRef !== null) {

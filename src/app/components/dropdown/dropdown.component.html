@@ -10,8 +10,9 @@
             <ng-template #defaultClose>&times;</ng-template>
           </span>
           <span class="selected-option-container">
-            <span class="selected-item" *ngFor="let option of selectedOptions">
-              <span>{{option.text}}&nbsp;</span>
+            <span class="selected-item" *ngFor="let option of selectedOptions; let last= last">
+              <span>{{option.text}}</span>
+              <ng-container *ngIf="!last">,&nbsp;</ng-container>
             </span>
           </span>
         </span>

@@ -11,6 +11,7 @@ export class AppComponent {
   selected = 'Apple'
   dropdownConfig : any = {
     backgroundColor: '#ffff13',
+    multipleSelection: true
   }
 
   onSelected(val : any){

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, ElementRef, forwardRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ElementRef, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { DropDownConfig, DropdownItem } from './dropdown.model';
@@ -16,7 +16,7 @@ export const DropdownControlValueAccessor : any ={
   providers: [DropdownControlValueAccessor],
   imports : [CommonModule, BrowserModule, FormsModule],
   templateUrl: './dropdown.component.html',
-  styleUrls: ['./dropdown.component.scss']
+  styleUrls: ['./dropdown.component.scss'],
 })
 export class DropdownComponent implements ControlValueAccessor{
 
@@ -46,7 +46,7 @@ set options(value : Array<any>){
   if (!value){
     this.data = [];
   } else {
-    this.data = value.map((item: any) => new DropdownItem(item))
+    this.data = value.map((item: any) => this.objectify(item))
   }
 }
 
@@ -56,7 +56,7 @@ public set ddconfig(obj : DropDownConfig){
   this._config= {...this._config, ...obj};
 }
 
-@Output() onSelect= new EventEmitter<string>();
+@Output() onSelect= new EventEmitter<DropdownItem>();
 @Output() onDeselect= new EventEmitter<string>();
 @Output() onCloseDropdown= new EventEmitter<string>();
 
@@ -64,7 +64,9 @@ public set ddconfig(obj : DropDownConfig){
 onChange = (_:any) => {};
 onTouch = () => {};
   
-  constructor(private el : ElementRef) {};
+  constructor(
+    private el : ElementRef,
+    ) {};
 
   ngOnInit() {
     this.setDropDownStyles();
@@ -90,15 +92,8 @@ onTouch = () => {};
 
   clickOption($event:any, item:DropdownItem){
     //two scenarios - handle select/unselect
-    let found = false;
-    this.selectedOptions.forEach((val) => {
-      if (val === item) {
-        found = true;
-      } else {
-        found =  false;
-      }
-      return found;
-    }) 
+    let found = this.selectedOptions.some(val => val == item);
+
     if (!found){
       this.addselectedOptions(item);
     } else{
@@ -107,32 +102,35 @@ onTouch = () => {};
     !this._config.multipleSelection ? this.closeDropdown() : null;
   }
 
-  addselectedOptions(item:any){
+  addselectedOptions(item:DropdownItem){
     if (!this._config.multipleSelection){
       if (this.selectedOptions.length > 0){
-        //previous selection made 
-        this.toggleSelection();
+        //toggle previous selection made 
+        this.selectedOptions[0].selected = false;
       }
       this.selectedOptions = [];
-      this.selectedOptions.push(item); 
-      console.log(this.selectedOptions);
-      } else {
-      this.selectedOptions.push(item);
-    }
-    this.toggleSelection();
+      } 
+    this.selectedOptions.push(item); 
+    this.toggleSelection(item);
     this.onChange(this.selectedOptions);
     this.onSelect.emit(item);
   }
 
+  
+
   removeSelectedOptions(item : any){
-    this.toggleSelection()
-    this.selectedOptions = [];
+    if (!this._config.multipleSelection){
+      this.selectedOptions = [];
+    } else {
+      this.selectedOptions.splice(this.selectedOptions.indexOf(item),1);
+    }
+    this.toggleSelection(item)
     this.onDeselect.emit(item);
     this.closeDropdown();
   }
 
-  toggleSelection(){
-    this.selectedOptions.map((val) => {val.selected = !val.selected})
+  toggleSelection(item: DropdownItem){
+    item.selected = !item.selected
   }
 
   toggleDropdown(evt: Event){
@@ -150,17 +148,50 @@ onTouch = () => {};
     this.onCloseDropdown.emit();
   }
 
-  //form control input funcs 
-  
-  writeValue(obj: any): void {
-    const defaultOption = this.data.find(val => val.text === obj);
+  objectify(item : any){
+    return new DropdownItem(item);
+  }
 
-    if (obj && obj.length > 0 && defaultOption ){
+  isASubSetof(obj : Array<DropdownItem>){
+    const parentValueIds = obj.map((item) => item.id);
+    console.log(parentValueIds);
+    this.data.forEach((item) => {
+      for (const i in parentValueIds){
+        const val = parentValueIds[i];
+        if (item.id == val){
+          this.selectedOptions.push(item);
+          parentValueIds.splice(parseInt(i),1);
+        }
+      }
+    })
+  }
+
+  
+
+  //form control input funcs 
+  writeValue(obj: any): void {
+    //user may send a arr of objects or a obj
+    let defaultOption : any; //Any accounts for all types parent may send
+    if (obj && obj.length > 0 ){
+      if (Array.isArray(obj)){
+        obj = obj.map((item:any) => this.objectify(item));
+        //calculate if obj is a subset of data
+        this.isASubSetof(obj);
+      } else {
+        obj = this.objectify(obj);
+        this.data.find(val => {
+          if (val.id == obj.id){
+            this.selectedOptions.push(val);
+          }
+        });
+      }
+      if (this.selectedOptions){
       //for default value set by parent
-        this.selectedOptions = [defaultOption];
-        this.toggleSelection();
-        this.onChange(defaultOption);
-    } else {
+      this.selectedOptions.forEach((item: DropdownItem) => {
+        this.toggleSelection(item);
+      },
+      this.onChange(this.selectedOptions)
+      )}} else {
       console.log(Error); //TODO - Find a better way of showing error to parent
     }
   }
