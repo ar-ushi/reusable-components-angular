@@ -152,7 +152,7 @@ onTouch = () => {};
     return new DropdownItem(item);
   }
 
-  isASubSetof(obj : Array<DropdownItem>){
+  addDefaultOptiontoSelection(obj : Array<DropdownItem>){
     const parentValueIds = obj.map((item) => item.id);
     console.log(parentValueIds);
     this.data.forEach((item) => {
@@ -166,7 +166,21 @@ onTouch = () => {};
     })
   }
 
-  
+  isASubSetof(obj : Array<DropdownItem>){
+    const isSubSet = obj.every((objItem : any) => 
+    this.data.some(dataItem => 
+      this.deepCompareTwoObjects(objItem, dataItem)));
+      return isSubSet;
+  }
+
+  deepCompareTwoObjects(obj : DropdownItem, dataItem: DropdownItem){
+    for (const key in obj){
+    if (!dataItem.hasOwnProperty(key) || dataItem[key] !== obj[key]){
+      return true;
+    }}
+    return false;
+  }
+
 
   //form control input funcs 
   writeValue(obj: any): void {
@@ -176,7 +190,11 @@ onTouch = () => {};
       if (Array.isArray(obj)){
         obj = obj.map((item:any) => this.objectify(item));
         //calculate if obj is a subset of data
-        this.isASubSetof(obj);
+        defaultOption = this.isASubSetof(obj);
+        if (defaultOption) {
+         this.addDefaultOptiontoSelection(obj);
+        }
+        console.log(defaultOption);
       } else {
         obj = this.objectify(obj);
         this.data.find(val => {

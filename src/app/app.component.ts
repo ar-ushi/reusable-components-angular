@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'client';
   fruits: string[] = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
-  selected = 'Apple'
+  selected = ['Apple', 'Banana']
   dropdownConfig : any = {
     backgroundColor: '#ffff13',
     multipleSelection: true
