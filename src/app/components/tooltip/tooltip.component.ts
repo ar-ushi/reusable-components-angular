@@ -21,7 +21,7 @@ export class TooltipComponent {
     this.el.nativeElement.style.setProperty('--tooltip-background-color', this.color);
     this.position && this.tooltipStyles.push(`tooltip--${this.position}`);
     this.transition && this.tooltipStyles.push(`tooltip--${this.transition}`);
-     this.duration != 1 && this.tooltipStyles.push('tooltip--fade-out')
+    this.duration != undefined && this.tooltipStyles.push('tooltip--fade-out')
 
   }
 }

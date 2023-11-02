@@ -23,6 +23,7 @@ export class TooltipDirective {
   //listener for onhover 
   @HostListener('mouseenter')
   onHover() : void {
+    console.log('mouseenter')
     this.initializeToolTip();
   }
 
@@ -34,6 +35,7 @@ export class TooltipDirective {
         this.componentRef = this.componentPool.pop()!;
         this.setTooltipProperties()
     }
+    this.closeTooltip(this.componentRef!.instance.duration!);
   }
 
   private setTooltipProperties(){
@@ -44,12 +46,12 @@ export class TooltipDirective {
       this.componentRef.instance.duration= this.duration;
       this.componentRef.instance.transition = this.transition;
       this.setPositionTooltip(this.componentRef.instance.position);
-      this.closeTooltip(this.componentRef.instance.duration!);
     }
   }
 
 closeTooltip(time : number){
   if (time != undefined){
+    console.log('i got called')
     setTimeout(() => {
       this.pushAndHideTooltip();}, time)
   }
@@ -84,11 +86,13 @@ closeTooltip(time : number){
 
 @HostListener('mouseleave') 
   onMouseLeave() : void {
+    console.log('mouseleave')
     this.pushAndHideTooltip();
 }
 
 pushAndHideTooltip() {
   if (this.componentRef !== null) {
+    console.log('i got called heloo')
     if (this.componentPool.length < 10){
       // Place the component back in the pool
       this.componentRef.instance.tooltip = '';
