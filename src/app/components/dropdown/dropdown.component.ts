@@ -29,12 +29,14 @@ _config: DropDownConfig = {
   shadow: '0px 1px 3px #959595',
   closeIconSrc: '',
   multipleSelection: false,
-  maximumSelection: -1
+  maximumAllowed: 1,
+  maximumSelectionErrorMsg : 'Maximum allowed selections exceeded.'
 }
 @Input() color? :  string = 'white';
 @Input() disabled?: boolean = false;
 @Input() fill? : 'default' | 'clear' | 'outline' | 'solid' = 'default';
 selectedOptions: Array<DropdownItem>  = [];
+showMaximumSelectionError : boolean = false;
 
 @Input()
 set placeholder(value:string){
@@ -54,6 +56,9 @@ set options(value : Array<any>){
 public set ddconfig(obj : DropDownConfig){
   //only override defaults for value sent by parent
   this._config= {...this._config, ...obj};
+  if (this._config.multipleSelection){
+    this._config.maximumAllowed = this._config.maximumAllowed ? this._config.maximumAllowed : this.data.length - 1;
+  }
 }
 
 @Output() onSelect= new EventEmitter<DropdownItem>();
@@ -126,14 +131,20 @@ onTouch = () => {};
         this.selectedOptions[0].selected = false;
       }
       this.selectedOptions = [];
-      } 
+    } else if (this._config.maximumAllowed === this.selectedOptions.length){
+      this.showMaximumSelectionError = true;
+      this.closeDropdown();
+      return this._config.maximumSelectionErrorMsg; //TODO - Modal UI Component
+    }
     this.selectedOptions.push(item); 
+    if (!this._config.maximumAllowed || this.selectedOptions.length === this.data.length){
+      this.closeDropdown();
+    }
     this.toggleSelection(item);
     this.onChange(this.selectedOptions);
     this.onSelect.emit(item);
+    return;
   }
-
-  
 
   removeSelectedOptions(item : any){
     if (!this._config.multipleSelection){
@@ -206,7 +217,8 @@ onTouch = () => {};
   writeValue(obj: any): void {
     //user may send a arr of objects or a obj
     let defaultOption : any; //Any accounts for all types parent may send
-    if (obj && obj.length > 0 ){
+    if (obj && (obj.length > 0 || Object.keys(obj).length)){
+      obj = this._config.multipleSelection ? obj : obj[0];
       if (Array.isArray(obj)){
         obj = obj.map((item:any) => this.objectify(item));
         //calculate if obj is a subset of data
@@ -214,7 +226,6 @@ onTouch = () => {};
         if (defaultOption) {
          this.addDefaultOptiontoSelection(obj);
         }
-        console.log(defaultOption);
       } else {
         obj = this.objectify(obj);
         this.data.find(val => {

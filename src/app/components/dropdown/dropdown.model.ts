@@ -6,7 +6,8 @@ export interface DropDownConfig{
     shadow?:string;
     closeIconSrc?:string; //TODO - Replace with icon component
     multipleSelection?: boolean;
-    maximumSelection?:number;
+    maximumAllowed?:number;
+    maximumSelectionErrorMsg: string;
 }
 
 export class DropdownItem {
