@@ -98,11 +98,11 @@ closeTooltip(time : number){
       return {leftOffset, paddingLeft, topOffset, paddingTop, rightOffset, paddingRight}
   }
 
-//@HostListener('mouseleave') 
-  //onMouseLeave() : void {
-    //this.pushAndHideTooltip();
-
-
+@HostListener('mouseleave') 
+  onMouseLeave() : void {
+    this.pushAndHideTooltip();
+  }
+  
 pushAndHideTooltip() {
   if (this.componentRef !== null) {
     if (this.componentPool.length < 10){

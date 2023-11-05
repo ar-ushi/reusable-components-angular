@@ -31,7 +31,14 @@ enum buttonFill{
 
 export class ButtonComponent {
 
-@Input() buttonConfig : ButtonStyles = {};
+@Input() buttonConfig : ButtonStyles = {
+  width : '150px',
+  height: '20px',
+  fontFamily : 'sans-serif',
+  fontSize : '10px',
+  border: 'none',
+  cursor : 'pointer'
+};
 @Input() expand? : string = '';
 @Input() size? : string = '';
 @Input() btncolor? : buttonColor = {};
@@ -46,6 +53,11 @@ onClickButton(event : any){
   }
 }
 
+@Input()
+public set config(obj : ButtonStyles){
+  //only override defaults for value sent by parent
+  this.buttonConfig= {...this.buttonConfig, ...obj};
+}
 get buttonStyles() {
   if (this.expand == block.expand){
     this.buttonClasses.push(this.expand);
@@ -55,18 +67,6 @@ get buttonStyles() {
   return this.buttonClasses
 }
 
-  ngonInit() {
-    //setting default styles if not provided by parent
-    if (!this.buttonConfig){
-    this.buttonConfig = {
-        width : '150px',
-        height: '20px',
-        fontFamily : 'sans-serif',
-        fontSize : '10px',
-        border: 'none'
-      }
-  }
-  }
 
   ngOnChanges() {
       (this.buttonConfig as any)=  (this.fill && this.fill == buttonFill.clear) ? {

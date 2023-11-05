@@ -1,11 +1,15 @@
 <app-demo-screen />
+<app-button style = "padding:50px; top:12px; left:12px; right:12px"label="'testing"
+ (onClick) = "buttonClicked($event)" 
+ [tooltip]="'btn2'" position = 'right'/>
 <div style='padding : 50px'>
-    <app-dropdown [options] = 'fruits'
+    <app-select [options] = 'fruits'
     placeholder="Fruit List"
     [(ngModel)] = "selected"
     (onSelect) = "onSelected($event)"
     [ddconfig] = "dropdownConfig"
     color = '111111'
     fill = 'outline'
+    [disabled]= "disableDropdown"
     />
 </div>

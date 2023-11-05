@@ -7,7 +7,8 @@ export interface ButtonStyles{
     fontSize?: string,
     borderRadius?: string,
     padding?: string,
-    border?:string
+    border?:string,
+    cursor?:string,
 }
 
 export interface buttonColor{

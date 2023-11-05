@@ -11,7 +11,7 @@ export const DropdownControlValueAccessor : any ={
 }
 
 @Component({
-  selector: 'app-dropdown',
+  selector: 'app-select',
   standalone: true,
   providers: [DropdownControlValueAccessor],
   imports : [CommonModule, BrowserModule, FormsModule],
@@ -29,7 +29,7 @@ _config: DropDownConfig = {
   shadow: '0px 1px 3px #959595',
   closeIconSrc: '',
   multipleSelection: false,
-  maximumAllowed: 1,
+  limitSelection: 1,
   maximumSelectionErrorMsg : 'Maximum allowed selections exceeded.'
 }
 @Input() color? :  string = 'white';
@@ -50,6 +50,7 @@ set options(value : Array<any>){
   } else {
     this.data = value.map((item: any) => this.objectify(item))
   }
+  console.log(this.data);
 }
 
 @Input()
@@ -57,7 +58,7 @@ public set ddconfig(obj : DropDownConfig){
   //only override defaults for value sent by parent
   this._config= {...this._config, ...obj};
   if (this._config.multipleSelection){
-    this._config.maximumAllowed = this._config.maximumAllowed ? this._config.maximumAllowed : this.data.length - 1;
+    this._config.limitSelection = this._config.limitSelection ? this._config.limitSelection : this.data.length - 1;
   }
 }
 
@@ -114,6 +115,9 @@ onTouch = () => {};
 
   clickOption($event:any, item:DropdownItem){
     //two scenarios - handle select/unselect
+    if (this.disabled || item.disabled){
+      return false;
+    }
     let found = this.selectedOptions.some(val => val == item);
 
     if (!found){
@@ -122,6 +126,7 @@ onTouch = () => {};
       this.removeSelectedOptions(item);
       }
     !this._config.multipleSelection ? this.closeDropdown() : null;
+    return;
   }
 
   addselectedOptions(item:DropdownItem){
@@ -131,13 +136,13 @@ onTouch = () => {};
         this.selectedOptions[0].selected = false;
       }
       this.selectedOptions = [];
-    } else if (this._config.maximumAllowed === this.selectedOptions.length){
+    } else if (this._config.limitSelection === this.selectedOptions.length){
       this.showMaximumSelectionError = true;
       this.closeDropdown();
       return this._config.maximumSelectionErrorMsg; //TODO - Modal UI Component
     }
     this.selectedOptions.push(item); 
-    if (!this._config.maximumAllowed || this.selectedOptions.length === this.data.length){
+    if (!this._config.limitSelection || this.selectedOptions.length === this.data.length){
       this.closeDropdown();
     }
     this.toggleSelection(item);

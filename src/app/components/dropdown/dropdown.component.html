@@ -20,7 +20,7 @@
         <div [hidden] = "!_config.defaultOpen"class="dropdown-data">
             <ul>
                 <li *ngFor="let item of data; let i = index;" (click)="clickOption($event,item)" class="item-checkbox">
-                  <input type=checkbox [attr.aria-label]="item" [checked] = "item.selected" />
+                  <input type=checkbox [attr.aria-label]="item" [checked] = "item.selected" [disabled]="disabled || item.disabled" />
                   <div>{{item.text}}</div>
                 </li>
             </ul>

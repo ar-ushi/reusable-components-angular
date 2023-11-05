@@ -6,7 +6,7 @@ export interface DropDownConfig{
     shadow?:string;
     closeIconSrc?:string; //TODO - Replace with icon component
     multipleSelection?: boolean;
-    maximumAllowed?:number;
+    limitSelection?:number;
     maximumSelectionErrorMsg: string;
 }
 
@@ -14,15 +14,18 @@ export class DropdownItem {
     id!: String | number;
     text!: String | number;
     selected?: boolean;
+    disabled? : boolean = false;
     [key: string] : any;
 
     public constructor(obj : any) {
         if (typeof obj === 'string' || typeof obj === 'number'){
             this.id = this.text = obj;
             this.selected = false;
+            this.disabled = false;
         }
         if (typeof obj === 'object'){
             for (const key in obj){
+                this.id = obj.id ? obj.id : obj.text;
                 this[key] = obj[key];
             }
         }

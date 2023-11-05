@@ -27,5 +27,4 @@ export class DemoScreenComponent {
    this.buttonCon = '<div><p>You just clicked a button!</p></div>'
    return this.buttonCon;
   }
-  
 }

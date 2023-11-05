@@ -7,14 +7,33 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'client';
-  fruits: string[] = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
+  fruits: any = [
+    {
+      text: 'Apple',
+      subtitle: 'So fresh',
+      disabled: 'true'
+    },
+    {
+      text: 'Banana',
+      subtitle: 'So yellow',
+    },
+    {
+      text: 'Cherry',
+      subtitle: 'What a wow',
+    },
+  ];
   selected = ['Apple']
+  disableDropdown = true;
   dropdownConfig : any = {
     backgroundColor: '#ffff13',
   }
 
   onSelected(val : any){
     console.log(val);
-    console.log(this.selected);
+    console.log(val.subtitle);
   }
+
+  buttonClicked(event:Event) {
+    this.disableDropdown = false;
+   }
 }
