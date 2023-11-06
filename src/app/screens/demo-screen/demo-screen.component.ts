@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {  ButtonStyles, buttonColor } from '../../components/button/Button.interface';
+import {  ButtonStyles, buttonColor } from '../../components/button/button.util';
 
 @Component({
   selector: 'app-demo-screen',

@@ -13,6 +13,7 @@
     .disabled {
       background-color: #cac8c8;
     }
+    
     .dropdown-btn{
         display:inline-block;
         border: 1px solid #adadad;
@@ -26,6 +27,19 @@
         vertical-align: middle;
         cursor: pointer;
         border-radius: 4px;
+        .dropdown-search{
+          input[type="text"] {
+            all: initial;
+            width: 100%;
+          }
+          ::placeholder{
+            color: black;
+          }
+          input:focus::placeholder{
+            display: none;
+            visibility: hidden;
+          }
+        }
     }
     .close-btn{
       left: 100%;

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, ElementRef, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ElementRef, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges, HostListener } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { DropDownConfig, DropdownItem } from './dropdown.model';
+import { DropDownConfig, DropdownItem } from './dropdown.util';
 
 export const DropdownControlValueAccessor : any ={
   provide: NG_VALUE_ACCESSOR,
@@ -18,7 +18,7 @@ export const DropdownControlValueAccessor : any ={
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.scss'],
 })
-export class DropdownComponent implements ControlValueAccessor{
+export class DropdownComponent implements ControlValueAccessor, OnChanges{
 
 data : Array<any> = [];
 _placeholder:string = 'Select';
@@ -30,13 +30,16 @@ _config: DropDownConfig = {
   closeIconSrc: '',
   multipleSelection: false,
   limitSelection: 1,
-  maximumSelectionErrorMsg : 'Maximum allowed selections exceeded.'
+  maximumSelectionErrorMsg : 'Maximum allowed selections exceeded.',
+  allowSearch: false
 }
 @Input() color? :  string = 'white';
 @Input() disabled?: boolean = false;
 @Input() fill? : 'default' | 'clear' | 'outline' | 'solid' = 'default';
 selectedOptions: Array<DropdownItem>  = [];
 showMaximumSelectionError : boolean = false;
+enableSearch: boolean = false;
+inFocus: boolean = false;
 
 @Input()
 set placeholder(value:string){
@@ -58,7 +61,7 @@ public set ddconfig(obj : DropDownConfig){
   //only override defaults for value sent by parent
   this._config= {...this._config, ...obj};
   if (this._config.multipleSelection){
-    this._config.limitSelection = this._config.limitSelection ? this._config.limitSelection : this.data.length - 1;
+    this._config.limitSelection = obj.limitSelection ? obj.limitSelection : this.data.length - 1;
   }
 }
 
@@ -76,6 +79,31 @@ onTouch = () => {};
 
   ngOnInit() {
     this.setDropDownStyles();
+  }
+
+  ngOnChanges(): void {
+    this.checkIfSearchAllowed()
+  }
+
+  @HostListener('blur')
+  public onTouched() {
+    if (this.onTouch){
+      this.onTouch();
+    }
+    this.inFocus = false;
+  }
+
+  @HostListener('focus')
+  public onFocus(){
+    this.inFocus = true;
+  }
+
+  checkIfSearchAllowed(){
+    return (this._config.multipleSelection && this._config.allowSearch && this.selectedOptions.length === 0 && this.inFocus)
+  }
+
+  preventBlur(event: Event) {
+    this.inFocus = true;
   }
   
   setDropDownStyles(){

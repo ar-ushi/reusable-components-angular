@@ -22,10 +22,10 @@ export class AppComponent {
       subtitle: 'What a wow',
     },
   ];
-  selected = ['Apple']
-  disableDropdown = true;
   dropdownConfig : any = {
     backgroundColor: '#ffff13',
+    allowSearch: true,
+    multipleSelection: true
   }
 
   onSelected(val : any){
@@ -33,7 +33,4 @@ export class AppComponent {
     console.log(val.subtitle);
   }
 
-  buttonClicked(event:Event) {
-    this.disableDropdown = false;
-   }
 }

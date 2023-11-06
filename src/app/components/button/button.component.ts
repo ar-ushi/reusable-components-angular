@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output} from '@angular/core';
-import { ButtonStyles, buttonColor } from './Button.interface';
+import { ButtonStyles, buttonColor } from './button.util';
 
 enum block{
   expand = "expand",
