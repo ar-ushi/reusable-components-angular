@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, ElementRef, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges, HostListener } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ElementRef, forwardRef,HostListener, ContentChild } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { DropDownConfig, DropdownItem } from './dropdown.util';
+import { AutoCompleteDirective } from '../autocomplete/autocomplete.directive';
 
 export const DropdownControlValueAccessor : any ={
   provide: NG_VALUE_ACCESSOR,
@@ -14,13 +15,18 @@ export const DropdownControlValueAccessor : any ={
   selector: 'app-select',
   standalone: true,
   providers: [DropdownControlValueAccessor],
-  imports : [CommonModule, BrowserModule, FormsModule],
+  imports : [CommonModule, BrowserModule, FormsModule, AutoCompleteDirective],
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.scss'],
 })
-export class DropdownComponent implements ControlValueAccessor, OnChanges{
+export class DropdownComponent implements ControlValueAccessor{
 
-data : Array<any> = [];
+/* 
+  data --> used to set & can be manipulated for search
+  originalData --> deep copy of data array for restoring values
+*/
+data : Array<any> = []; 
+originalData : Array<any> = [];
 _placeholder:string = 'Select';
 _config: DropDownConfig = {
   defaultOpen: false,
@@ -31,7 +37,8 @@ _config: DropDownConfig = {
   multipleSelection: false,
   limitSelection: 1,
   maximumSelectionErrorMsg : 'Maximum allowed selections exceeded.',
-  allowSearch: false
+  allowSearch: false,
+  allowEmptyStringonSearch: false,
 }
 @Input() color? :  string = 'white';
 @Input() disabled?: boolean = false;
@@ -39,7 +46,7 @@ _config: DropDownConfig = {
 selectedOptions: Array<DropdownItem>  = [];
 showMaximumSelectionError : boolean = false;
 enableSearch: boolean = false;
-inFocus: boolean = false;
+noResultsFoundErrorMsg: string = "";
 
 @Input()
 set placeholder(value:string){
@@ -53,7 +60,7 @@ set options(value : Array<any>){
   } else {
     this.data = value.map((item: any) => this.objectify(item))
   }
-  console.log(this.data);
+  this.originalData = JSON.parse(JSON.stringify(this.data));
 }
 
 @Input()
@@ -81,31 +88,13 @@ onTouch = () => {};
     this.setDropDownStyles();
   }
 
-  ngOnChanges(): void {
-    this.checkIfSearchAllowed()
-  }
-
   @HostListener('blur')
   public onTouched() {
     if (this.onTouch){
       this.onTouch();
     }
-    this.inFocus = false;
   }
 
-  @HostListener('focus')
-  public onFocus(){
-    this.inFocus = true;
-  }
-
-  checkIfSearchAllowed(){
-    return (this._config.multipleSelection && this._config.allowSearch && this.selectedOptions.length === 0 && this.inFocus)
-  }
-
-  preventBlur(event: Event) {
-    this.inFocus = true;
-  }
-  
   setDropDownStyles(){
     let border, txtColor;
 
@@ -141,6 +130,22 @@ onTouch = () => {};
     `;
   }
 
+  getFilteredData(filteredDataList: Array<any>){
+    this.data = [...filteredDataList];
+    const searchInput = (<HTMLInputElement>document.getElementById('search'));
+    if (this._config.allowEmptyStringonSearch && searchInput.value == "" ){
+      searchInput.blur();
+      this.closeDropdown();
+    }
+    if (filteredDataList.length == 0){
+      this.noResultsFoundErrorMsg = 'No results found. Modify your search';
+      this.data = [...this.originalData];
+      searchInput.value = "";
+      this.closeDropdown()
+    }else {
+      this.noResultsFoundErrorMsg = ""
+    }
+  }
   clickOption($event:any, item:DropdownItem){
     //two scenarios - handle select/unselect
     if (this.disabled || item.disabled){
@@ -199,7 +204,7 @@ onTouch = () => {};
   }
 
   toggleDropdown(evt: Event){
-    evt.preventDefault();
+    //only allow toggledropdown if search not initiated
     if (this.disabled) return;
     //maintain a state for dropdown close vs dropdown open
     this._config.defaultOpen = !this._config.defaultOpen;

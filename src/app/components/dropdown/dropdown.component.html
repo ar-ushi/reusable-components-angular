@@ -1,9 +1,9 @@
-<div tabindex="0" class="dropdown" (blur)="onTouched()" (focus)="onFocus()"> 
+<div tabindex="0" class="dropdown" (blur)="onTouched()"> 
     <div [class.disabled]="disabled">
       <span tabindex="-1" class="dropdown-btn" (click)="toggleDropdown($event)">
         <span>
           <section class="dropdown-search" [hidden]="selectedOptions.length> 0">
-            <input type = "text" placeholder="{{_placeholder}}" [disabled]= "!_config.allowSearch"/>
+            <input id=search autocomplete [searchData]="originalData" [allowEmpty]="_config.allowEmptyStringonSearch" type = "text" placeholder="{{_placeholder}}" [readOnly]= "!_config.allowSearch" (filteredDataList)="getFilteredData($event)"/>
           </section>
           <span [hidden]="selectedOptions.length == 0" (click) = "removeSelectedOptions(selectedOptions); $event.stopPropagation()" class="close-btn">
             <ng-container *ngIf="_config.closeIconSrc; else defaultClose">
@@ -18,7 +18,6 @@
             </span>
           </span>
         </span>
-
      </span>
         <div [hidden] = "!_config.defaultOpen"class="dropdown-data">
             <ul>
@@ -29,5 +28,6 @@
             </ul>
         </div>
         <div [hidden]="!showMaximumSelectionError" class="error-msg">{{_config.maximumSelectionErrorMsg}}</div>
+        <div [hidden]="!noResultsFoundErrorMsg" class="error-msg">{{noResultsFoundErrorMsg}}</div>
     </div>
 </div>

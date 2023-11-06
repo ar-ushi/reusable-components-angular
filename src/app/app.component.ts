@@ -14,18 +14,19 @@ export class AppComponent {
       disabled: 'true'
     },
     {
-      text: 'Banana',
+      text: 'Berries',
       subtitle: 'So yellow',
     },
     {
-      text: 'Cherry',
+      text: 'Berry',
       subtitle: 'What a wow',
     },
   ];
   dropdownConfig : any = {
     backgroundColor: '#ffff13',
     allowSearch: true,
-    multipleSelection: true
+    multipleSelection: true,
+    allowEmptyStringonSearch: true,
   }
 
   onSelected(val : any){

@@ -1,27 +1,72 @@
-import { Directive, HostListener, Input } from "@angular/core";
+import { Directive, EventEmitter, HostListener, Input, Output} from "@angular/core";
 import { keyCode } from "./autocomplete.util";
+import { debounceTime, distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
+import { Observable, of } from "rxjs";
+
 
 @Directive({
     selector: '[autocomplete]',
+    standalone: true,
   })
 
   export class AutoCompleteDirective {
     @Input() searchData?: string | Array<any>  //data can be api url (search box) or a list (dropdown)
+    @Input() allowEmpty? : boolean = false;
+    @Output() filteredDataList = new EventEmitter<Array<any>>;
+    searchTerm : any;
 
-   @HostListener('keyup', ['event'])
-   onKeyUp(event : KeyboardEvent){
-    if (event && event.target && this.validateCharKeyCode (parseInt(event.key))){
-      this.showFilteredDataList(event);
-      console.log((event.target as HTMLInputElement).value);
+    @HostListener('keyup', ['$event'])
+    onKeyUp(event: KeyboardEvent) {
+      this.searchTerm = ((event.target as HTMLInputElement).value);
+      if (event && event.target && this.validateCharKeyCode(event.key)) {
+        this.showFilteredDataList(of(event));
+      }
     }
-   }
+    
+    private showFilteredDataList(event: Observable<KeyboardEvent>) {
+      event.pipe(
+        filter((e: KeyboardEvent) => this.validateCharKeyCode(e.key)),
+        map((e: KeyboardEvent) => this.extractSearchTerm(e)),
+        distinctUntilChanged(),
+        switchMap((searchTerm : string) => {
+          if (Array.isArray(this.searchData)){
+          const filteredData = this.filterStaticData(searchTerm);
+            return of(filteredData);
+          } else {
+            if (searchTerm === "" && Array.isArray(this.searchData) && !this.allowEmpty){
+              return of(this.searchData);
+            }
+            return of([]);
+          }
+          })
+      ).subscribe((filteredList) => {
+        this.filteredDataList.emit(filteredList!);
+      });
+    }
+    
+  extractSearchTerm(e : KeyboardEvent){
+    return (e.target as HTMLInputElement).value;
+  }
+  /* Used for Components which has a finite, manageable list of data already being called to the UI in an API call - e.g : Dropdown */ 
+  filterStaticData(query : string){
+    query = query.toLowerCase();
+    if (Array.isArray(this.searchData)){
+    const filteredList = this.searchData!.filter((str: any) => {
+      const textToCompare = (str.text || str).toString().toLowerCase();
+      return textToCompare.startsWith(query);
+    });
+    return filteredList;
+  };
+  return;
+  }
 
-    private showFilteredDataList(event: KeyboardEvent){       
-   }
-
-   validateCharKeyCode(key: number) : boolean{
+   validateCharKeyCode(key: string) : boolean{
     var keyValue = Object.values(keyCode)
     return keyValue.every(codeKey => codeKey !== key);
    }
-
 }
+
+/* 
+Empty String -
+Two ways : handle by emitting a event emitter or return the original data
+*/
