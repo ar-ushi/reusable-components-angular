@@ -91,7 +91,7 @@ onTouch = () => {};
   public onTouched() {
     if (this.onTouch){
       this.onTouch();
-      this._config.maximumSelectionErrorMsg = "";
+      this.showMaximumSelectionError = false;
     }
   }
 

@@ -12,6 +12,7 @@ import { Observable, of } from "rxjs";
   export class AutoCompleteDirective {
     @Input() searchData?: string | Array<any>  //data can be api url (search box) or a list (dropdown)
     @Output() filteredDataList = new EventEmitter<Array<any>>;
+    @Input() debounce = 300;
     searchTerm : any;
 
     @HostListener('keyup', ['$event'])
@@ -26,6 +27,7 @@ import { Observable, of } from "rxjs";
       event.pipe(
         filter((e: KeyboardEvent) => this.validateCharKeyCode(e.key)),
         map((e: KeyboardEvent) => this.extractSearchTerm(e)),
+        debounceTime(this.debounce),
         distinctUntilChanged(),
         switchMap((searchTerm : string) => {
           if (Array.isArray(this.searchData)){
