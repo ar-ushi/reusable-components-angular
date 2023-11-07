@@ -4,6 +4,7 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
 import { BrowserModule } from '@angular/platform-browser';
 import { DropDownConfig, DropdownItem } from './dropdown.util';
 import { AutoCompleteDirective } from '../autocomplete/autocomplete.directive';
+import { ClickOutsideDirective } from '../clickOutside/click-outside.directive';
 
 export const DropdownControlValueAccessor : any ={
   provide: NG_VALUE_ACCESSOR,
@@ -15,7 +16,7 @@ export const DropdownControlValueAccessor : any ={
   selector: 'app-select',
   standalone: true,
   providers: [DropdownControlValueAccessor],
-  imports : [CommonModule, BrowserModule, FormsModule, AutoCompleteDirective],
+  imports : [CommonModule, BrowserModule, FormsModule, AutoCompleteDirective,ClickOutsideDirective],
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.scss'],
 })
@@ -121,7 +122,7 @@ onTouch = () => {};
     childElements.forEach((child) => {
       if (child.className != 'close-btn'){
       (child as HTMLElement).style.backgroundColor = 'inherit';
-  }});
+      }});
     //set dropdown list styles
     (document.getElementsByClassName('dropdown-data').item(0) as HTMLElement).style.cssText = `
     box-shadow: ${this._config.shadow};
@@ -133,7 +134,6 @@ onTouch = () => {};
 
   getFilteredData(filteredDataList: Array<any>){
     this.data = [...filteredDataList];
-    const searchInput = (<HTMLInputElement>document.getElementById('search'))
     if (filteredDataList.length == 0){
       this.noResultsFoundErrorMsg= 'No results found. Modify your search';
       this.closeDropdown();

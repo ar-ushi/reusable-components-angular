@@ -66,8 +66,3 @@ import { Observable, of } from "rxjs";
     return keyValue.every(codeKey => codeKey !== key);
    }
 }
-
-/* 
-Empty String -
-Two ways : handle by emitting a event emitter or return the original data
-*/
