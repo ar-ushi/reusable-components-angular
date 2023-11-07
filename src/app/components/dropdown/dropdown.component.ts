@@ -119,8 +119,9 @@ onTouch = () => {};
     //inherit background color to child
     const childElements = document.querySelectorAll('.dropdown *');
     childElements.forEach((child) => {
+      if (child.className != 'close-btn'){
       (child as HTMLElement).style.backgroundColor = 'inherit';
-    });
+  }});
     //set dropdown list styles
     (document.getElementsByClassName('dropdown-data').item(0) as HTMLElement).style.cssText = `
     box-shadow: ${this._config.shadow};

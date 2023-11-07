@@ -41,10 +41,14 @@
         }
     }
     .close-btn{
-      left: 100%;
-      font-size:15px;
+      border: none;
+      background-color: transparent;
+      font-size: 15px;
       position: absolute;
-      opacity: 0.3;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      opacity: 0.5;
     }
     .close-btn:hover{
       opacity: 1;
