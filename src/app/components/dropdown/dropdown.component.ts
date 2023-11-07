@@ -92,6 +92,7 @@ onTouch = () => {};
   public onTouched() {
     if (this.onTouch){
       this.onTouch();
+      this._config.maximumSelectionErrorMsg = "";
     }
   }
 
@@ -133,15 +134,16 @@ onTouch = () => {};
   getFilteredData(filteredDataList: Array<any>){
     this.data = [...filteredDataList];
     const searchInput = (<HTMLInputElement>document.getElementById('search'));
-    if (this._config.allowEmptyStringonSearch && searchInput.value == "" ){
+    if (this._config.allowEmptyStringonSearch && searchInput.value == ""){
       searchInput.blur();
       this.closeDropdown();
+      console.log('I was called to blur')
     }
     if (filteredDataList.length == 0){
-      this.noResultsFoundErrorMsg = 'No results found. Modify your search';
+      this.noResultsFoundErrorMsg= 'No results found. Modify your search';
       this.data = [...this.originalData];
-      searchInput.value = "";
-      this.closeDropdown()
+      this.closeDropdown();
+      console.log('i was called  for empty syring')
     }else {
       this.noResultsFoundErrorMsg = ""
     }

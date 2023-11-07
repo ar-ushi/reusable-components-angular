@@ -25,6 +25,7 @@ export class AppComponent {
   dropdownConfig : any = {
     backgroundColor: '#ffff13',
     allowSearch: true,
+    limitSelection: 1,
     multipleSelection: true,
     allowEmptyStringonSearch: true,
   }
