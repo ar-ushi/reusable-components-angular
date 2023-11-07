@@ -27,7 +27,6 @@ export class AppComponent {
     allowSearch: true,
     limitSelection: 1,
     multipleSelection: true,
-    allowEmptyStringonSearch: true,
   }
 
   onSelected(val : any){

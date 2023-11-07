@@ -9,7 +9,6 @@ export interface DropDownConfig{
     limitSelection?:number;
     maximumSelectionErrorMsg: string;
     allowSearch: boolean;
-    allowEmptyStringonSearch : boolean
 }
 
 export class DropdownItem {

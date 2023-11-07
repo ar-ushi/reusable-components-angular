@@ -38,7 +38,6 @@ _config: DropDownConfig = {
   limitSelection: 1,
   maximumSelectionErrorMsg : 'Maximum allowed selections exceeded.',
   allowSearch: false,
-  allowEmptyStringonSearch: false,
 }
 @Input() color? :  string = 'white';
 @Input() disabled?: boolean = false;
@@ -133,21 +132,16 @@ onTouch = () => {};
 
   getFilteredData(filteredDataList: Array<any>){
     this.data = [...filteredDataList];
-    const searchInput = (<HTMLInputElement>document.getElementById('search'));
-    if (this._config.allowEmptyStringonSearch && searchInput.value == ""){
-      searchInput.blur();
-      this.closeDropdown();
-      console.log('I was called to blur')
-    }
+    const searchInput = (<HTMLInputElement>document.getElementById('search'))
     if (filteredDataList.length == 0){
       this.noResultsFoundErrorMsg= 'No results found. Modify your search';
-      this.data = [...this.originalData];
       this.closeDropdown();
-      console.log('i was called  for empty syring')
-    }else {
-      this.noResultsFoundErrorMsg = ""
+    } else {
+      this.noResultsFoundErrorMsg = "";
+      this.openDropdown();
     }
   }
+
   clickOption($event:any, item:DropdownItem){
     //two scenarios - handle select/unselect
     if (this.disabled || item.disabled){
@@ -205,7 +199,7 @@ onTouch = () => {};
     item.selected = !item.selected
   }
 
-  toggleDropdown(evt: Event){
+  toggleDropdown(){
     //only allow toggledropdown if search not initiated
     if (this.disabled) return;
     //maintain a state for dropdown close vs dropdown open
@@ -218,6 +212,10 @@ onTouch = () => {};
   closeDropdown() {
     this._config.defaultOpen = false;
     this.onCloseDropdown.emit();
+  }
+
+  openDropdown(){
+    this._config.defaultOpen = true;
   }
 
   objectify(item : any){

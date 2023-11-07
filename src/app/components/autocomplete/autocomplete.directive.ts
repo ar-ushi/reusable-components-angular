@@ -11,7 +11,6 @@ import { Observable, of } from "rxjs";
 
   export class AutoCompleteDirective {
     @Input() searchData?: string | Array<any>  //data can be api url (search box) or a list (dropdown)
-    @Input() allowEmpty? : boolean = false;
     @Output() filteredDataList = new EventEmitter<Array<any>>;
     searchTerm : any;
 
@@ -33,7 +32,7 @@ import { Observable, of } from "rxjs";
           const filteredData = this.filterStaticData(searchTerm);
             return of(filteredData);
           } else {
-            if (searchTerm === "" && Array.isArray(this.searchData) && !this.allowEmpty){
+            if (searchTerm === "" && Array.isArray(this.searchData)){
               return of(this.searchData);
             }
             return of([]);
