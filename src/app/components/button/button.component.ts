@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output} from '@angular/core';
 import { ButtonStyles, buttonColor } from './button.util';
+import { CommonModule } from '@angular/common';
 
 enum block{
   expand = "expand",
@@ -24,6 +25,8 @@ enum buttonFill{
 
 @Component({
   selector: 'app-button',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.scss']
 })
@@ -42,7 +45,6 @@ export class ButtonComponent {
 @Input() expand? : string = '';
 @Input() size? : string = '';
 @Input() btncolor? : buttonColor = {};
-@Input() label? : string = '';
 @Input() fill? : 'default' | 'clear' | 'outline' | 'solid' = 'default';
 @Output() onClick = new EventEmitter<any>();
 buttonClasses : any[] = [];

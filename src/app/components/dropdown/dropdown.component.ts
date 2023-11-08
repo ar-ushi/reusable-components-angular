@@ -96,6 +96,7 @@ onTouch = () => {};
     }
   }
 
+  //TODO - Code Refactoring
   setDropDownStyles(){
     let border, txtColor;
 

@@ -3,4 +3,6 @@
 [ngClass] = "buttonClasses" 
 (click)="onClickButton($event)"
 (keydown.enter)="onClickButton($event)"
->{{label}}</button>
+>
+<ng-content></ng-content>
+</button>
