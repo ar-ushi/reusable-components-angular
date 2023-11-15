@@ -1,10 +1,17 @@
-.chip-container{
-    display: inline-block;
+ .chip-container{
+    display: inline-flex;    
+    align-items: center;
+    gap: 0.5rem;
     background-color: #e0e0e0;
     border-radius: 16px;
-    padding: 4px 12px;
+    padding: 2px 10px;
 }
 
 .chip-label{
     font-size: 14px;
+}
+
+button{
+    all: initial;
+    cursor: pointer;
 }

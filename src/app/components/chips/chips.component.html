@@ -2,4 +2,12 @@
     <span class="chip-label">
         <ng-content></ng-content>
     </span>
-</div>
+    <ng-container *ngIf = "_closeable">
+        <button (click)="onCloseChip()">
+        <ng-container *ngIf="closeIconSrc; else defaultClose">
+            <img [src]="closeIconSrc" alt="Close Chip"/>
+            </ng-container>
+            <ng-template #defaultClose>&times;</ng-template>
+        </button>
+    </ng-container>
+</div>    

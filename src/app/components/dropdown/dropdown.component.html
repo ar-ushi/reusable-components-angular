@@ -20,7 +20,7 @@
               </span>
               </ng-container>
               <ng-container *ngIf="_chips">
-                <app-chip>{{option.text}}</app-chip>
+                <app-chip closeable (closeChip)="removeSelectedOptions(option)">{{option.text}}</app-chip>
               </ng-container>
           </ng-container>
           </section>
