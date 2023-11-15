@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, ElementRef, forwardRef,HostListener, ContentChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ElementRef, forwardRef,HostListener } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { DropDownConfig, DropdownItem } from './dropdown.util';
 import { AutoCompleteDirective } from '../autocomplete/autocomplete.directive';
 import { ClickOutsideDirective } from '../clickOutside/click-outside.directive';
+import { ChipsComponent } from '../chips/chips.component';
 
 export const DropdownControlValueAccessor : any ={
   provide: NG_VALUE_ACCESSOR,
@@ -16,7 +17,7 @@ export const DropdownControlValueAccessor : any ={
   selector: 'app-select',
   standalone: true,
   providers: [DropdownControlValueAccessor],
-  imports : [CommonModule, BrowserModule, FormsModule, AutoCompleteDirective,ClickOutsideDirective],
+  imports : [CommonModule, BrowserModule, FormsModule, AutoCompleteDirective,ClickOutsideDirective, ChipsComponent],
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.scss'],
 })
@@ -40,8 +41,9 @@ _config: DropDownConfig = {
   maximumSelectionErrorMsg : 'Maximum allowed selections exceeded.',
   allowSearch: false,
 }
+_chips: boolean = false;
+_disabled: boolean = false;
 @Input() color? :  string = 'white';
-@Input() disabled?: boolean = false;
 @Input() fill? : 'default' | 'clear' | 'outline' | 'solid' = 'default';
 selectedOptions: Array<DropdownItem>  = [];
 showMaximumSelectionError : boolean = false;
@@ -70,6 +72,16 @@ public set ddconfig(obj : DropDownConfig){
   if (this._config.multipleSelection){
     this._config.limitSelection = obj.limitSelection ? obj.limitSelection : this.data.length - 1;
   }
+}
+
+@Input()
+public set chips(val : string | boolean){
+  this._chips = (typeof(val) === 'string' || val === true) ? true : false;
+}
+
+@Input() 
+public set disabled(val : string | boolean){
+  this._disabled = (typeof(val) === 'string' || val === true) ? true : false;
 }
 
 @Output() onSelect= new EventEmitter<DropdownItem>();
@@ -146,7 +158,7 @@ onTouch = () => {};
 
   clickOption($event:any, item:DropdownItem){
     //two scenarios - handle select/unselect
-    if (this.disabled || item.disabled){
+    if (this._disabled || item.disabled){
       return false;
     }
     let found = this.selectedOptions.some(val => val == item);
@@ -203,7 +215,7 @@ onTouch = () => {};
 
   toggleDropdown(){
     //only allow toggledropdown if search not initiated
-    if (this.disabled) return;
+    if (this._disabled) return;
     //maintain a state for dropdown close vs dropdown open
     this._config.defaultOpen = !this._config.defaultOpen;
     if(!this._config.defaultOpen){

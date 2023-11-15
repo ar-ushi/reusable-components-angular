@@ -13,11 +13,16 @@
           </button>
           <section class="selected-option-container">
             <ng-container *ngFor="let option of selectedOptions; let last= last">
-              <span class="selected-item">
-                <span>{{option.text}}</span>
+              <ng-container *ngIf ="!_chips">
+                <span class="selected-item">
+                  <span>{{option.text}}</span>    
                 <ng-container *ngIf="!last">,&nbsp;</ng-container>
               </span>
-            </ng-container>
+              </ng-container>
+              <ng-container *ngIf="_chips">
+                <app-chip>{{option.text}}</app-chip>
+              </ng-container>
+          </ng-container>
           </section>
       </button>
     </section>
