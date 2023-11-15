@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, OnDestroy, ComponentRef} from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnDestroy, ComponentRef, ViewContainerRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,10 +8,10 @@ import { CommonModule } from '@angular/common';
   templateUrl: './chips.component.html',
   styleUrls: ['./chips.component.scss']
 })
-export class ChipsComponent implements OnDestroy{
+export class ChipsComponent{
   _closeable : boolean  = false;
+  isVisible : boolean = true;
   /* Text inside chip should default to text inside app-chip component/directive*/
-  private componentRef: ComponentRef<ChipsComponent> | null = null;
   @Input() color? : string | undefined;
   @Input() 
   public set closeable(val : string | boolean){
@@ -23,11 +23,7 @@ export class ChipsComponent implements OnDestroy{
   constructor(){}
 
   onCloseChip(){
+    this.isVisible = false;
     this.closeChip?.emit();
-    this.ngOnDestroy;
-  }
-
-  ngOnDestroy(){
-    this.componentRef?.destroy();
   }
 }
