@@ -1,7 +1,6 @@
 export interface DropDownConfig{
     defaultOpen?: boolean;
     backgroundColor?: string;
-    textColor?: string;
     width?:string;
     shadow?:string;
     closeIconSrc?:string; //TODO - Replace with icon component

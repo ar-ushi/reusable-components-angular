@@ -8,7 +8,7 @@ export class TooltipDirective {
 
   @Input() tooltip = '';
   @Input() position: 'above' | 'below' | 'right' | 'left' =  'below';
-  @Input() color : string = 'black'; //default color for tooltip will be black
+  @Input() ttcolor : string = 'black'; //default color for tooltip will be black
   @Input() transition? : 'fade-in' | 'fade-out' | 'none' = 'none';
   @Input() duration? : number = undefined; //setting default as 1ms
   private componentRef: ComponentRef<TooltipComponent> | null = null;
@@ -41,7 +41,7 @@ export class TooltipDirective {
     if (this.componentRef !== null) {
       this.componentRef.instance.tooltip = this.tooltip;
       this.componentRef.instance.position = this.position;
-      this.componentRef.instance.color = this.color;
+      this.componentRef.instance.color = this.ttcolor;
       this.componentRef.instance.duration= this.duration;
       this.componentRef.instance.transition = this.transition;
       this.setPositionTooltip(this.componentRef.instance.position);

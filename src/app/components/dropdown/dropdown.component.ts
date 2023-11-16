@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, ElementRef, forwardRef,HostListener } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ElementRef, forwardRef,HostListener, AfterViewInit } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { DropDownConfig, DropdownItem } from './dropdown.util';
 import { AutoCompleteDirective } from '../autocomplete/autocomplete.directive';
 import { ClickOutsideDirective } from '../clickOutside/click-outside.directive';
 import { ChipsComponent } from '../chips/chips.component';
+import { Colors } from 'src/app/common-behaviors/colors';
+import { createColorObject } from 'src/app/common-behaviors/common-methods';
 
 export const DropdownControlValueAccessor : any ={
   provide: NG_VALUE_ACCESSOR,
@@ -21,7 +23,7 @@ export const DropdownControlValueAccessor : any ={
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.scss'],
 })
-export class DropdownComponent implements ControlValueAccessor{
+export class DropdownComponent implements ControlValueAccessor, AfterViewInit{
 
 /* 
   data --> used to set & can be manipulated for search
@@ -30,9 +32,9 @@ export class DropdownComponent implements ControlValueAccessor{
 data : Array<any> = []; 
 originalData : Array<any> = [];
 _placeholder:string = 'Select';
+private _colors : Colors;
 _config: DropDownConfig = {
   defaultOpen: false,
-  textColor: "#111111",
   width: '100%',
   shadow: '0px 1px 3px #959595',
   closeIconSrc: '',
@@ -43,8 +45,9 @@ _config: DropDownConfig = {
 }
 _chips: boolean = false;
 _disabled: boolean = false;
-@Input() color? :  string = 'white';
-@Input() fill? : 'default' | 'clear' | 'outline' | 'solid' = 'default';
+@Input() color? :  string = 'black';
+@Input() bgcolor? : string = 'grey';
+@Input() fill :  'clear' | 'outline' | 'solid' = 'solid';
 selectedOptions: Array<DropdownItem>  = [];
 showMaximumSelectionError : boolean = false;
 enableSearch: boolean = false;
@@ -94,10 +97,14 @@ onTouch = () => {};
   
   constructor(
     private el : ElementRef,
-    ) {};
+    ) {
+      this._colors = new Colors(el);
+    };
 
-  ngOnInit() {
-    this.setDropDownStyles();
+  ngAfterViewInit(): void {
+    this._colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill));
+    const obj = this._colors.getStyles();
+    this.setDropDownStyles(obj);
   }
 
   @HostListener('blur')
@@ -109,27 +116,7 @@ onTouch = () => {};
   }
 
   //TODO - Code Refactoring
-  setDropDownStyles(){
-    let border, txtColor;
-
-    if (this.fill && (this.fill === 'clear' ||  this.fill === 'outline')) {
-      if (this.fill === 'clear') border = 'none';
-      else if (this.fill === 'outline') border = `2px solid ${this.color}`;
-      txtColor = this.color != 'white' ? this.color : this._config.textColor;
-      this.color = 'white';
-    } else {
-      txtColor = this._config.textColor;
-    }
-  (document.getElementsByClassName('dropdown').item(0) as HTMLElement).style.cssText = `
-    background-color : ${this.color};
-    color: ${txtColor};
-    width: ${this._config.width}
-    `;
-
-    (document.getElementsByClassName('dropdown-btn').item(0) as HTMLElement).style.cssText = `
-    border : ${border};
-    `;
-
+  setDropDownStyles(obj : any){
     //inherit background color to child
     const childElements = document.querySelectorAll('.dropdown *');
     childElements.forEach((child) => {
@@ -140,8 +127,8 @@ onTouch = () => {};
     (document.getElementsByClassName('dropdown-data').item(0) as HTMLElement).style.cssText = `
     box-shadow: ${this._config.shadow};
     background-color: inherit;
-    border: ${border};
-    color: ${txtColor}
+    border: ${obj.border};
+    color: ${obj.color}
     `;
   }
 

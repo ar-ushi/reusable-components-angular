@@ -1,11 +1,6 @@
 @use 'sass:math';
 @use 'sass:map';
 
-button{
-    background-color: blue;
-    color : white;
-}
-
 $button-height : 36px;
 $button-font-size: 12px;
 $button-width-ratio: math.div(16,9) !default;

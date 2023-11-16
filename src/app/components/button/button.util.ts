@@ -1,4 +1,3 @@
-
 export interface ButtonStyles{
     position?: string,
     width?: string,
@@ -10,9 +9,3 @@ export interface ButtonStyles{
     border?:string,
     cursor?:string,
 }
-
-export interface buttonColor{
-    bgColor? : string,
-    txtColor? : string,
-  }
-  

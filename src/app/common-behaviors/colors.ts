@@ -1,49 +1,66 @@
-import { ElementRef } from '@angular/core';
-import { AbstractConstructor, Constructor } from './constructor';
+import { ElementRef } from "@angular/core";
+import { Color } from "./common-types";
 
-export interface color {
-    color : string;
-}
+export class Colors {
+    protected border: string ='';
+    protected color: string =  'black';
+    protected bgColor: string =  '#e0e0e0';
+    constructor(public _elementRef : ElementRef) {}
 
-type colorConstructor = Constructor<color> & AbstractConstructor<color>;
-
-export interface hasElementRef {
-    _elementRef : ElementRef;
-}
-
-export function mixinColor<T extends AbstractConstructor<hasElementRef>>(
-    base: T,
-  ): colorConstructor & T;
-  export function mixinColor<T extends Constructor<hasElementRef>>(
-    base: T,
-  ): colorConstructor & T {
-    return class extends base {
-      private _color: string = '';
-      defaultColor = 'black';
-  
-      get color(): string {
-        return this._color;
-      }
-      set color(value: string) {
-        const color = value || this.defaultColor;
-  
-        if (color !== this._color) {
-          if (this._color) {
-            this._elementRef.nativeElement.style.removeProperty('background-color');
-          }
-          if (color) {
-            this._elementRef.nativeElement.style.backgroundColor = color;
-          }
-  
-          this._color = color;
+    addColors(value: Color | Array<Color> | undefined){
+        if (!value){
+            this.applyDefaultStyles();
+        } else if (Array.isArray(value)){
+            value.forEach(val => this.applyStyles(val));
+        } else{
+            this.applyStyles(value);
         }
-      }
-  
-      constructor(...args: any[]) {
-        super(...args);
-  
-        // Set the default color that can be specified from the mixin.
-        this.color = this.defaultColor;
-      }
-    };
-  }
+    }
+
+    applyStyles(val : Color){
+        switch (val.type){
+            case 'text': 
+            this.applyTextStyles(val);
+            break;
+            case 'background':
+            this.applyBackgroundStyles(val);
+            break;
+        }
+    }
+    applyDefaultStyles(){
+        this.applyTextStyles({color : this.color, type:'text'});
+        this.applyBackgroundStyles({color : this.bgColor, type:'background'})
+    }
+
+    applyTextStyles(val: Color){
+        this._elementRef.nativeElement.firstChild.style.color = val.color;
+    }
+
+    applyBackgroundStyles(val: Color){
+        let border, color, bgColor;
+        switch(val.fill){
+            case 'clear' :
+                border = 'none';
+                bgColor = 'white';
+                color = val.color;
+            break;
+            case 'outline':
+                border = `2px solid ${val.color}`;
+                bgColor = 'white';
+                color = val.color;
+            break;
+            case 'solid':
+                bgColor = val.color;
+            break;
+            default :
+                bgColor = val.color;
+        }
+        this._elementRef.nativeElement.firstChild.style.backgroundColor = bgColor;
+        if (border) this._elementRef.nativeElement.firstChild.style.border = border;
+        if (color)  this._elementRef.nativeElement.firstChild.style.color = color;
+    }
+
+    getStyles(){
+        //method to return for further styling in parent
+    }
+}
