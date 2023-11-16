@@ -3,6 +3,7 @@
  [tooltip]="'btn2'" position = 'right'>Home</app-button>
 <div style='padding : 50px'>
     <app-select chips [options] = 'fruits'
+    bgcolor = 'green' fill="outline"
     placeholder="Fruit List"
     (onSelect) = "onSelected($event)"
     [ddconfig] = "dropdownConfig"

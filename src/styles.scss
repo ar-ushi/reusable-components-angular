@@ -3,3 +3,12 @@ body{
     height: 100%;  
     font-family: 'Open Sans', 'Helvetica Neue', sans-serif;  
 }
+
+.flex-row{
+    display: flex;
+}
+
+.flex-column{
+    display:flex;
+    flex-direction: column;
+}

@@ -5,11 +5,7 @@
     .disabled{
       opacity: 0.25;
     }
-    .error-msg{
-      color: red;
-      margin: 5px;
-      font-size: 12px;
-    }
+  
     .disabled {
       background-color: #cac8c8;
     }
@@ -69,20 +65,18 @@
         li {
             padding: 6px 10px;
             padding-left: 0px;
+            display: flex;
+            align-items: flex-start;
             cursor: pointer;
-            text-align: left;
+        }
+        .dropdown-option-subtitle{
+          font-size: 12px;
         }
         .item-checkbox:hover{
             background-color: #ffffff71;
-          }
-          .item-checkbox input[type='checkbox'] {
-            position: absolute;
-            width: 20px;
-          }
-          
+          }  
           .item-checkbox input + div {
-            position: relative;
-            padding-left: 2em;
+            padding-left: 0.5rem;
             vertical-align: middle;
             user-select: none;
             cursor: pointer;
@@ -90,4 +84,10 @@
             color: #000;
           }
     }
+}
+
+.error-msg{
+  color: red;
+  margin: 5px;
+  font-size: 12px;
 }

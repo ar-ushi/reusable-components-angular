@@ -19,13 +19,13 @@ export class AppComponent {
     },
     {
       text: 'Berry',
-      subtitle: 'What a wow',
+    subtitle: 'What a wow',
     },
   ];
   dropdownConfig : any = {
     backgroundColor: '#ffff13',
     allowSearch: true,
-    limitSelection: 1,
+    limitSelection: 3,
     multipleSelection: true,
   }
 

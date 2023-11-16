@@ -45,8 +45,8 @@ _config: DropDownConfig = {
 }
 _chips: boolean = false;
 _disabled: boolean = false;
-@Input() color? :  string = 'black';
-@Input() bgcolor? : string = 'grey';
+@Input() color? :  string;
+@Input() bgcolor? : string;
 @Input() fill :  'clear' | 'outline' | 'solid' = 'solid';
 selectedOptions: Array<DropdownItem>  = [];
 showMaximumSelectionError : boolean = false;
@@ -103,8 +103,7 @@ onTouch = () => {};
 
   ngAfterViewInit(): void {
     this._colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill));
-    const obj = this._colors.getStyles();
-    this.setDropDownStyles(obj);
+    this.setDropDownStyles();
   }
 
   @HostListener('blur')
@@ -116,19 +115,17 @@ onTouch = () => {};
   }
 
   //TODO - Code Refactoring
-  setDropDownStyles(obj : any){
+  setDropDownStyles(){
     //inherit background color to child
     const childElements = document.querySelectorAll('.dropdown *');
     childElements.forEach((child) => {
-      if (child.className != 'close-btn'){
-      (child as HTMLElement).style.backgroundColor = 'inherit';
+      if (child.className !== 'close-btn') {
+        (child as HTMLElement).style.backgroundColor = 'inherit';
       }});
     //set dropdown list styles
     (document.getElementsByClassName('dropdown-data').item(0) as HTMLElement).style.cssText = `
     box-shadow: ${this._config.shadow};
     background-color: inherit;
-    border: ${obj.border};
-    color: ${obj.color}
     `;
   }
 
@@ -149,12 +146,17 @@ onTouch = () => {};
       return false;
     }
     let found = this.selectedOptions.some(val => val == item);
-
+    if (this._config.limitSelection !== this.selectedOptions.length){
     if (!found){
       this.addselectedOptions(item);
     } else{
       this.removeSelectedOptions(item);
       }
+    }else {
+      this.showMaximumSelectionError = true;
+      this.closeDropdown();
+      return this._config.maximumSelectionErrorMsg; //TODO - Modal UI Component
+    }
     !this._config.multipleSelection ? this.closeDropdown() : null;
     return;
   }
@@ -166,11 +168,7 @@ onTouch = () => {};
         this.selectedOptions[0].selected = false;
       }
       this.selectedOptions = [];
-    } else if (this._config.limitSelection === this.selectedOptions.length){
-      this.showMaximumSelectionError = true;
-      this.closeDropdown();
-      return this._config.maximumSelectionErrorMsg; //TODO - Modal UI Component
-    }
+    } 
     this.selectedOptions.push(item); 
     if (!this._config.limitSelection || this.selectedOptions.length === this.data.length){
       this.closeDropdown();
