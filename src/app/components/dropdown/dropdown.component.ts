@@ -114,7 +114,6 @@ onTouch = () => {};
     }
   }
 
-  //TODO - Code Refactoring
   setDropDownStyles(){
     //inherit background color to child
     const childElements = document.querySelectorAll('.dropdown *');

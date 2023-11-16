@@ -11,18 +11,16 @@
             </ng-container>
             <ng-template #defaultClose>&times;</ng-template>
           </button>
-          <section class="selected-option-container">
-            <ng-container *ngFor="let option of selectedOptions; let last= last">
-              <ng-container *ngIf ="!_chips">
-                <span class="selected-item">
+          <section [ngClass]="_chips ? 'chip-row' : 'selected-option-container'">
+            <div *ngFor="let option of selectedOptions; let last= last">
+              <ng-container *ngIf = "_chips">
+                  <span chip closeable (closeChip)="removeSelectedOptions(option)">{{option.text}}</span>    
+              </ng-container>
+                <span *ngIf="chips" class="selected-item">
                   <span>{{option.text}}</span>    
                 <ng-container *ngIf="!last">,&nbsp;</ng-container>
               </span>
-              </ng-container>
-              <ng-container *ngIf="_chips">
-                <app-chip closeable (closeChip)="removeSelectedOptions(option)">{{option.text}}</app-chip>
-              </ng-container>
-          </ng-container>
+            </div>
           </section>
       </button>
     </section>
@@ -37,7 +35,7 @@
                   </ng-container>
                 </div>
                 </li>
-            </ul>
+              </ul>
         </section>
     </div>
   </div>

@@ -11,7 +11,7 @@
     }
     
     .dropdown-btn{
-        display:inline-block;
+        display:inline-flex;
         border: 1px solid #adadad;
         width: 100%;
         padding: 6px 12px;
@@ -49,6 +49,13 @@
     .close-btn:hover{
       opacity: 1;
     }
+    .selected-option-container{
+      display: inline-flex;
+    }
+    .chip-row{
+      display: inline-flex;
+      gap:0.5rem
+  }
     .dropdown-data{
         position: absolute;
         width: 100%;
