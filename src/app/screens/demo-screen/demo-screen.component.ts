@@ -11,10 +11,10 @@ export class DemoScreenComponent {
   buttonCon : string = '';
   buttonConfig : ButtonStyles= {
       width : '150px',
-      height: '60px',
+      height: '120px',
       fontFamily : 'sans-serif',
-      fontSize: '20px',
-      padding : '5px 5px 5px 5px',
+      fontSize: '1rem',
+      padding : '4rem',
       borderRadius: '5px',
       border : 'none'
   }

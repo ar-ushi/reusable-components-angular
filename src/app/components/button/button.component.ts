@@ -1,8 +1,9 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import { ButtonStyles} from './button.util';
 import { CommonModule } from '@angular/common';
-import { Colors } from 'src/app/common-behaviors/colors';
-import { createColorObject } from 'src/app/common-behaviors/common-methods';
+import { Colors, createColorObject } from 'src/app/common-behaviors/colors';
+import { BaseClass } from 'src/app/common-behaviors/base';
+import { Size } from 'src/app/common-behaviors/size';
 
 enum block{
   expand = "expand",
@@ -36,13 +37,12 @@ export class ButtonComponent implements AfterViewInit{
   border: 'none',
   cursor : 'pointer'
 };
-@Input() expand? : string = '';
-@Input() size? : string = '';
+@Input() size? : 'xs' | 's' | 'l' | 'xl'
 @Input() color?: string;
 @Input() bgcolor?: string;
 @Input() fill :  'clear' | 'outline' | 'solid' = 'solid'
 @Output() onClick = new EventEmitter<any>();
-private colors : Colors;
+private styles : BaseClass;
 buttonClasses : any[] = [];
 
 onClickButton(event : any){
@@ -57,20 +57,18 @@ public set config(obj : ButtonStyles){
   this.buttonConfig= {...this.buttonConfig, ...obj};
 }
 get buttonStyles() {
-  if (this.expand == block.expand){
-    this.buttonClasses.push(this.expand);
-  }
   this.size && this.buttonClasses.push(`btn--size-${this.size}`);
 
   return this.buttonClasses
 }
 
 constructor(public _elementRef : ElementRef){  
-  this.colors  = new Colors(_elementRef);
+ this.styles  = new BaseClass( new Colors(_elementRef), new Size(_elementRef));
 }
 
 ngAfterViewInit(){
-  this.colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill));
+  this.styles.colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill));
+  this.styles.size?.addSize(this.size!);
 }
 }
 

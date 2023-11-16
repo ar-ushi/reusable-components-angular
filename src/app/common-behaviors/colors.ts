@@ -1,5 +1,5 @@
-import { ElementRef } from "@angular/core";
 import { Color } from "./common-types";
+import { ElementRef } from "@angular/core";
 
 export function createColorObject(bgcolor : string, color: string, fill: 'clear' | 'outline' | 'solid'){
     const compColor : Color[] = [
@@ -22,12 +22,12 @@ export function variantColor(color: string, factor: number): string{
 
 }
 
-export class Colors {
+export class Colors{
     protected border: string ='';
     protected color: string =  'black';
     protected bgColor: string =  '#e0e0e0';
-    constructor(public _elementRef : ElementRef) {}
 
+    constructor(public _elementRef : ElementRef) {}
     addColors(value: Color | Array<Color> | undefined){
         if (!value){
             this.applyDefaultStyles();
@@ -58,6 +58,7 @@ export class Colors {
     }
 
     applyBackgroundStyles(val: Color){
+        let el =  this._elementRef.nativeElement.firstChild.style;
         let border, color, bgColor;
         switch(val.fill){
             case 'clear' :
@@ -76,12 +77,8 @@ export class Colors {
             default :
                 bgColor = val.color;
         }
-        this._elementRef.nativeElement.firstChild.style.backgroundColor = bgColor;
-        if (border) this._elementRef.nativeElement.firstChild.style.border = border;
-        if (color)  this._elementRef.nativeElement.firstChild.style.color = color;
-    }
-
-    getStyles(){
-        //method to return for further styling in parent
+        el.backgroundColor = bgColor;
+        if (border) el.border = border;
+        if (color)  el.color = color;
     }
 }

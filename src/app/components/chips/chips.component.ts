@@ -1,7 +1,6 @@
 import { Component, Input, EventEmitter, Output, AfterViewInit, ElementRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Colors } from 'src/app/common-behaviors/colors';
-import { createColorObject } from 'src/app/common-behaviors/common-methods';
+import { Colors, createColorObject } from 'src/app/common-behaviors/colors';
 
 @Component({
   selector: 'app-chip, [chip], chip',
