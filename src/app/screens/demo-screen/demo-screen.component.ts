@@ -18,8 +18,7 @@ export class DemoScreenComponent {
       borderRadius: '5px',
       border : 'none'
   }
-  
-  buttonClicked(event:Event) {
+  cked(event:Event) {
    this.buttonCon = '<div><p>You just clicked a button!</p></div>'
    return this.buttonCon;
   }
