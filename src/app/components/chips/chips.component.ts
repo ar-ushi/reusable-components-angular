@@ -2,6 +2,7 @@ import { Component, Input, EventEmitter, Output, AfterViewInit, ElementRef} from
 import { CommonModule } from '@angular/common';
 import { Colors } from 'src/app/common-behaviors/colors';
 import { createColorObject } from 'src/app/common-behaviors/common';
+import { BaseClass } from 'src/app/common-behaviors/base';
 
 @Component({
   selector: 'app-chip, [chip], chip',
@@ -13,7 +14,7 @@ import { createColorObject } from 'src/app/common-behaviors/common';
 export class ChipsComponent implements AfterViewInit{
   _closeable : boolean  = false;
   isVisible : boolean = true;
-  private colors : Colors;
+  private styles : BaseClass;
   /* Text inside chip should default to text inside app-chip component/directive*/
   @Input() color? : string;
   @Input() bgcolor? : string;
@@ -26,15 +27,14 @@ export class ChipsComponent implements AfterViewInit{
   @Input() closeIconSrc? : string = '';
   @Output() closeChip: EventEmitter<any> = new EventEmitter();
 
-  constructor(public _elementRef : ElementRef){  
-    this.colors  = new Colors(_elementRef);
+  constructor(public el : ElementRef){  
+    this.styles  = new BaseClass( new Colors(el));
   }
   onCloseChip(){
     this.isVisible = false;
     this.closeChip?.emit();
   }
-
   ngAfterViewInit(): void {
-    this.colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill, this.variant!));
+    this.styles.colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill, this.variant!));
   }
 }

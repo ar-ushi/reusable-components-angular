@@ -6,19 +6,6 @@ import { BaseClass } from 'src/app/common-behaviors/base';
 import { Size } from 'src/app/common-behaviors/size';
 import { createColorObject } from 'src/app/common-behaviors/common';
 
-enum block{
-  expand = "expand",
-  full = "full",
-  default = "default"
-}
-
-enum size{
-  xs = "xs",
-  s = "s",
-  default = "default",
-  l = "l",
-  xl = "xl"
-}
 @Component({
   selector: 'app-button',
   standalone: true,
@@ -33,7 +20,6 @@ export class ButtonComponent implements AfterViewInit{
 @Input() buttonConfig : ButtonStyles = {
   width : '150px',
   height: '20px',
-  fontFamily : 'sans-serif',
   fontSize : '10px',
   border: 'none',
   cursor : 'pointer'
@@ -42,6 +28,7 @@ export class ButtonComponent implements AfterViewInit{
 @Input() color?: string;
 @Input() bgcolor?: string;
 @Input() fill :  'clear' | 'outline' | 'solid' = 'solid'
+@Input() variant?: 'lighter' | 'light' | 'dark' | 'darker'
 @Output() onClick = new EventEmitter<any>();
 private styles : BaseClass;
 buttonClasses : any[] = [];
@@ -57,18 +44,13 @@ public set config(obj : ButtonStyles){
   //only override defaults for value sent by parent
   this.buttonConfig= {...this.buttonConfig, ...obj};
 }
-get buttonStyles() {
-  this.size && this.buttonClasses.push(`btn--size-${this.size}`);
-
-  return this.buttonClasses
-}
 
 constructor(public _elementRef : ElementRef){  
  this.styles  = new BaseClass( new Colors(_elementRef), new Size(_elementRef));
 }
 
 ngAfterViewInit(){
-  this.styles.colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill));
+  this.styles.colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill, this.variant!));
   this.styles.size?.addSize(this.size!);
 }
 }

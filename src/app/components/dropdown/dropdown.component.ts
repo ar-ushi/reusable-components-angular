@@ -8,6 +8,7 @@ import { ClickOutsideDirective } from '../clickOutside/click-outside.directive';
 import { ChipsComponent } from '../chips/chips.component';
 import { Colors} from 'src/app/common-behaviors/colors';
 import { createColorObject } from 'src/app/common-behaviors/common';
+import { BaseClass } from 'src/app/common-behaviors/base';
 
 export const DropdownControlValueAccessor : any ={
   provide: NG_VALUE_ACCESSOR,
@@ -32,7 +33,7 @@ export class DropdownComponent implements ControlValueAccessor, AfterViewInit{
 data : Array<any> = []; 
 originalData : Array<any> = [];
 _placeholder:string = 'Select';
-private _colors : Colors;
+private styles : BaseClass;
 _config: DropDownConfig = {
   defaultOpen: false,
   width: '100%',
@@ -98,11 +99,11 @@ onTouch = () => {};
   constructor(
     private el : ElementRef,
     ) {
-      this._colors = new Colors(el);
+      this.styles  = new BaseClass( new Colors(el));  
     };
 
   ngAfterViewInit(): void {
-    this._colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill));
+    this.styles.colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill));    
     this.setDropDownStyles();
   }
 
@@ -289,7 +290,4 @@ onTouch = () => {};
     this.onTouch = fn;
   }
   
-  setDisabledState(isDisabled: boolean): void {
-  }
-
 }

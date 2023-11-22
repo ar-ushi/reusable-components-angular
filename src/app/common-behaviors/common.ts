@@ -22,7 +22,7 @@ enum variantFactors {
     darker = 0.5,
 }
 
-export function createColorObject(bgcolor : string, color: string, fill: 'clear' | 'outline' | 'solid', variant?: keyof typeof variantFactors){
+export function createColorObject(bgcolor : string, color: string, fill?: 'clear' | 'outline' | 'solid', variant?: keyof typeof variantFactors){
     const compColor : Color[] = [
         {color: bgcolor!, type: 'background', fill: fill, variant: variant!},
         {color: color!, type: 'text'}     

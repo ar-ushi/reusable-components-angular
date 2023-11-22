@@ -1,6 +1,8 @@
 import { Color, applyVariant } from "./common";
 import { ElementRef } from "@angular/core";
 
+
+//TODO - Configure default colors according to base appliation's theme (dark mode/light mode)
 export class Colors{
     protected border: string ='';
     protected color: string =  'black';
