@@ -9,29 +9,24 @@ export class Colors{
     protected bgColor: string =  '#e0e0e0';
 
     constructor(public _elementRef : ElementRef) {}
-    addColors(value: Color | Array<Color> | undefined){
-        if (!value){
-            this.applyDefaultStyles();
-        } else if (Array.isArray(value)){
-            value.forEach(val => this.applyStyles(val));
+    addColors(value: Color | Array<Color>){
+    if (Array.isArray(value)){
+            value.forEach(val => {this.applyStyles(val)
+            });
         } else{
-            this.applyStyles(value);
+             this.applyStyles(value)
         }
     }
 
     applyStyles(val : Color){
         switch (val.type){
             case 'text': 
-            this.applyTextStyles(val);
+            (val.color) ? this.applyTextStyles(val) : this.applyTextStyles({color : this.color, type:'text'});
             break;
             case 'background':
-            this.applyBackgroundStyles(val);
+            val.color ? this.applyBackgroundStyles(val) : this.applyBackgroundStyles({color : this.bgColor, type:'background'})
             break;
         }
-    }
-    applyDefaultStyles(){
-        this.applyTextStyles({color : this.color, type:'text'});
-        this.applyBackgroundStyles({color : this.bgColor, type:'background'})
     }
 
     applyTextStyles(val: Color){
@@ -62,4 +57,5 @@ export class Colors{
         if (border) el.border = border;
         if (color)  el.color = color;
     }
+
 }

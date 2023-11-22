@@ -1,18 +1,17 @@
-
-  .tooltip{
+.tooltip{
     position: fixed;
     border-radius: 4px;
+    background-color: var(--tooltip-bg-color);
+    color: var(--tooltip-txt-color);
     font-family: Arial;
-    background-color: var(--tooltip-background-color);
     padding: 3px 6px;
-    color: white;
     font-size: 13px;
     &::before {
       content: '';
       width: 0;
       height: 0;
       position: absolute;
-      border: 5px solid var(--tooltip-background-color);
+      border: 5px solid var(--tooltip-bg-color);
     }
     &--below {
       transform:translateX(-50%);

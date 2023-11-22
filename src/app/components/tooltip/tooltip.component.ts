@@ -1,16 +1,14 @@
-import { AfterViewInit, Component, ElementRef, OnInit} from '@angular/core';
-import { BaseClass } from 'src/app/common-behaviors/base';
-import { Colors } from 'src/app/common-behaviors/colors';
-import { createColorObject } from 'src/app/common-behaviors/common';
+import { AfterContentChecked,  AfterViewChecked,  AfterViewInit,  Component, ElementRef, OnInit} from '@angular/core';
+
 
 @Component({
   selector: 'tooltip',
   templateUrl: './tooltip.component.html',
   styleUrls: ['./tooltip.component.scss']
 })
-export class TooltipComponent implements OnInit, AfterViewInit {
+export class TooltipComponent implements OnInit{
  tooltip: string = '';
- position: 'above' | 'below' | 'right' | 'left' = 'below';
+ position?: 'above' | 'below' | 'right' | 'left' = 'below';
  left = 0;
  top = 0;
  color?: string;
@@ -18,19 +16,14 @@ export class TooltipComponent implements OnInit, AfterViewInit {
  duration? : number = 5000;
  transition? : 'fade-in' | 'fade-out' | 'none';
  tooltipStyles: any[] = [];
- styles : BaseClass;
   
-constructor(private el : ElementRef) {
-  this.styles  = new BaseClass( new Colors(el));
-}
+constructor(private el : ElementRef) {}
 
   ngOnInit() {
+    this.el.nativeElement.style.setProperty('--tooltip-bg-color', this.bgcolor);
+    this.el.nativeElement.style.setProperty('--tooltip-txt-color', this.color);
     this.position && this.tooltipStyles.push(`tooltip--${this.position}`);
     this.transition && this.tooltipStyles.push(`tooltip--${this.transition}`);
     this.duration != undefined && this.tooltipStyles.push('tooltip--fade-out'); 
-  }
-
-  ngAfterViewInit(): void {
-    this.styles.colors.addColors(createColorObject(this.bgcolor!, this.color!));
   }
 }

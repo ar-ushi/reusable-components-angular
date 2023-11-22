@@ -7,11 +7,11 @@ import { TooltipComponent } from './tooltip.component';
 export class TooltipDirective {
 
   @Input() tooltip = '';
-  @Input() position: 'above' | 'below' | 'right' | 'left' =  'below';
-  @Input() ttcolor! : string; 
-  @Input() ttbgcolor!: string;
+  @Input() position?: 'above' | 'below' | 'right' | 'left' =  'below';
+  @Input() ttcolor? : string ='white';
+  @Input() ttbgcolor?: string = 'black';
   @Input() transition? : 'fade-in' | 'fade-out' | 'none' = 'none';
-  @Input() duration? : number = undefined; //setting default as 1ms
+  @Input() duration? : number;
   private componentRef: ComponentRef<TooltipComponent> | null = null;
   private componentPool : ComponentRef<TooltipComponent>[] = []; //component pool only for tooltip events
 
@@ -33,9 +33,8 @@ export class TooltipDirective {
       this.createAndAttachTooltip();
     } else {
         this.componentRef = this.componentPool.pop()!;
-        this.componentRef.instance.tooltip = this.tooltip;
-        console.log(this.componentRef);
-    }
+        this.setTooltipProperties();
+      }
     this.closeTooltip(this.componentRef!.instance.duration!);
   }
 
@@ -58,7 +57,10 @@ export class TooltipDirective {
     }
   }
 
-  setPositionTooltip(pos : string){
+  setPositionTooltip(pos : string | undefined){
+    if (!pos){
+      pos = 'below';
+    }
     const {left, right, top, bottom} = this.elementRef.nativeElement.getBoundingClientRect();
     //account for inline styles to tooltip
     const {leftOffset, paddingLeft, topOffset, paddingTop, rightOffset, paddingRight} = this.setPositionsbyInlineStyles();
@@ -119,6 +121,7 @@ export class TooltipDirective {
   createAndAttachTooltip() {
     this.componentRef = this.viewContainerRef.createComponent(TooltipComponent);
     this.setTooltipProperties();
+    console.log(this.componentRef)
     this.componentRef.changeDetectorRef.detectChanges();
   }
 
