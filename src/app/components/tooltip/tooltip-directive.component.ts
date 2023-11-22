@@ -33,7 +33,8 @@ export class TooltipDirective {
       this.createAndAttachTooltip();
     } else {
         this.componentRef = this.componentPool.pop()!;
-        this.setTooltipProperties()
+        this.componentRef.instance.tooltip = this.tooltip;
+        console.log(this.componentRef);
     }
     this.closeTooltip(this.componentRef!.instance.duration!);
   }
@@ -43,19 +44,19 @@ export class TooltipDirective {
       this.componentRef.instance.tooltip = this.tooltip;
       this.componentRef.instance.position = this.position;
       this.componentRef.instance.color = this.ttcolor;
-    this.componentRef.instance.bgcolor = this.ttbgcolor;
+      this.componentRef.instance.bgcolor = this.ttbgcolor;
       this.componentRef.instance.duration= this.duration;
       this.componentRef.instance.transition = this.transition;
       this.setPositionTooltip(this.componentRef.instance.position);
     }
   }
 
-closeTooltip(time : number){
-  if (time != undefined){
-    setTimeout(() => {
-      this.pushAndHideTooltip();}, time)
+  closeTooltip(time : number){
+    if (time != undefined){
+      setTimeout(() => {
+        this.pushAndHideTooltip();}, time)
+    }
   }
-}
 
   setPositionTooltip(pos : string){
     const {left, right, top, bottom} = this.elementRef.nativeElement.getBoundingClientRect();
@@ -100,37 +101,36 @@ closeTooltip(time : number){
       return {leftOffset, paddingLeft, topOffset, paddingTop, rightOffset, paddingRight}
   }
 
-@HostListener('mouseleave') 
-  onMouseLeave() : void {
-    this.pushAndHideTooltip();
-  }
-  
-pushAndHideTooltip() {
-  if (this.componentRef !== null) {
-    if (this.componentPool.length < 10){
-      // Place the component back in the pool
-      this.componentRef.instance.tooltip = '';
-      this.componentPool.push(this.componentRef);
+  @HostListener('mouseleave') 
+    onMouseLeave() : void {
+      this.pushAndHideTooltip();
     }
-      this.componentRef = null; // Reset the reference 
-}
-}
-createAndAttachTooltip() {
-  this.componentRef = this.viewContainerRef.createComponent(TooltipComponent);
-  this.setTooltipProperties();
-  this.componentRef.changeDetectorRef.detectChanges();
-}
-
-  ngOnDestroy() : void {
-    this.destroy(); // prevent memoryleaks
+    
+  pushAndHideTooltip() {
+    if (this.componentRef !== null) {
+      if (this.componentPool.length < 10){
+        // Place the component back in the pool
+        this.componentRef.instance.tooltip = '';
+        this.componentPool.push(this.componentRef);
+      }
+        this.componentRef = null; // Reset the reference 
+  }
+  }
+  createAndAttachTooltip() {
+    this.componentRef = this.viewContainerRef.createComponent(TooltipComponent);
+    this.setTooltipProperties();
+    this.componentRef.changeDetectorRef.detectChanges();
   }
 
-  destroy() : void {
-    if (this.componentRef !== null){
-      this.viewContainerRef.detach(this.viewContainerRef.indexOf(this.componentRef.hostView));
-      this.componentRef.destroy();
-      this.componentRef = null; //reinitalize for next instance
+    ngOnDestroy() : void {
+      this.destroy(); // prevent memoryleaks
     }
-  }
-}
 
+    destroy() : void {
+      if (this.componentRef !== null){
+        this.viewContainerRef.detach(this.viewContainerRef.indexOf(this.componentRef.hostView));
+        this.componentRef.destroy();
+        this.componentRef = null; //reinitalize for next instance
+      }
+    }
+}
