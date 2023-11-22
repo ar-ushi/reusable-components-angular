@@ -1,13 +1,8 @@
 import { ElementRef } from "@angular/core";
+import { sizeMultiplier } from "./common";
 
 export class Size{
-    multiplier = {
-        'xl' : 4,
-        'l' : 2,
-        'default' : 1,
-        's' : 0.5,
-        'xs': 0.25,    
-    }   
+    
     protected paddingratio = 2.25;    
     
     constructor(public _elementRef : ElementRef) {}
@@ -22,10 +17,10 @@ export class Size{
         let el = this._elementRef.nativeElement.firstChild.style
         //numeric value and unit of height
         const height = this.parseNumericValue(el.height);
-        const calculatedHeight =  height.numericValue * this.multiplier[size];
+        const calculatedHeight =  height.numericValue * sizeMultiplier[size];
         //numeric value and unit of font
         const font = this.parseNumericValue(el.fontSize);
-        var calculatedFont = font.numericValue + Math.floor((2*this.multiplier[size])/16);
+        var calculatedFont = font.numericValue + Math.floor((2*sizeMultiplier[size])/16);
         calculatedFont = calculatedHeight < calculatedFont ? calculatedHeight : calculatedFont;
         //calculate padding
         const calculatedPadding = calculatedHeight/this.paddingratio;

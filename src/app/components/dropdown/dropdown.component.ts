@@ -6,7 +6,8 @@ import { DropDownConfig, DropdownItem } from './dropdown.util';
 import { AutoCompleteDirective } from '../autocomplete/autocomplete.directive';
 import { ClickOutsideDirective } from '../clickOutside/click-outside.directive';
 import { ChipsComponent } from '../chips/chips.component';
-import { Colors, createColorObject } from 'src/app/common-behaviors/colors';
+import { Colors} from 'src/app/common-behaviors/colors';
+import { createColorObject } from 'src/app/common-behaviors/common';
 
 export const DropdownControlValueAccessor : any ={
   provide: NG_VALUE_ACCESSOR,

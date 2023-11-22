@@ -1,6 +1,7 @@
 import { Component, Input, EventEmitter, Output, AfterViewInit, ElementRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Colors, createColorObject } from 'src/app/common-behaviors/colors';
+import { Colors } from 'src/app/common-behaviors/colors';
+import { createColorObject } from 'src/app/common-behaviors/common';
 
 @Component({
   selector: 'app-chip, [chip], chip',
@@ -17,6 +18,7 @@ export class ChipsComponent implements AfterViewInit{
   @Input() color? : string;
   @Input() bgcolor? : string;
   @Input() fill :  'clear' | 'outline' | 'solid' = 'solid'
+  @Input() variant?: 'lighter' | 'light' | 'dark' | 'darker'
   @Input() 
   public set closeable(val : string | boolean){
     this._closeable = (typeof(val) === 'string' || val === true) ? true : false;
@@ -33,6 +35,6 @@ export class ChipsComponent implements AfterViewInit{
   }
 
   ngAfterViewInit(): void {
-    this.colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill));
+    this.colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill, this.variant!));
   }
 }

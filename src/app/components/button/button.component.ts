@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import { ButtonStyles} from './button.util';
 import { CommonModule } from '@angular/common';
-import { Colors, createColorObject } from 'src/app/common-behaviors/colors';
+import { Colors } from 'src/app/common-behaviors/colors';
 import { BaseClass } from 'src/app/common-behaviors/base';
 import { Size } from 'src/app/common-behaviors/size';
+import { createColorObject } from 'src/app/common-behaviors/common';
 
 enum block{
   expand = "expand",
@@ -71,5 +72,3 @@ ngAfterViewInit(){
   this.styles.size?.addSize(this.size!);
 }
 }
-
-
