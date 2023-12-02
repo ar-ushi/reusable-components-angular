@@ -4,7 +4,8 @@ export type Color = {
     color: string;
     type: 'text' | 'background';
     fill?: 'clear' | 'outline' | 'solid';
-    variant? : 'lighter' | 'light' | 'dark' | 'darker'
+    variant? : 'lighter' | 'light' | 'dark' | 'darker';
+    factor?:number;
 }
 
 export enum sizeMultiplier {
@@ -22,9 +23,9 @@ enum variantFactors {
     darker = 0.5,
 }
 
-export function createColorObject(bgcolor : string, color: string, fill?: 'clear' | 'outline' | 'solid', variant?: keyof typeof variantFactors){
+export function createColorObject(bgcolor : string, color: string, fill?: 'clear' | 'outline' | 'solid', variant?: keyof typeof variantFactors, factor?:number){
     const compColor : Color[] = [
-        {color: bgcolor!, type: 'background', fill: fill, variant: variant!},
+        {color: bgcolor!, type: 'background', fill: fill, variant: variant!, factor:factor!},
         {color: color!, type: 'text'}     
     ]
     return compColor;

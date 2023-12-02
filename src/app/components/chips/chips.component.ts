@@ -11,7 +11,7 @@ import { BaseClass } from 'src/app/common-behaviors/base';
   templateUrl: './chips.component.html',
   styleUrls: ['./chips.component.scss']
 })
-export class ChipsComponent implements AfterViewInit, OnDestroy{
+export class ChipsComponent implements AfterViewInit{
   _closeable : boolean  = false;
   isVisible : boolean = true;
   private styles : BaseClass;
@@ -20,6 +20,7 @@ export class ChipsComponent implements AfterViewInit, OnDestroy{
   @Input() bgcolor? : string;
   @Input() fill :  'clear' | 'outline' | 'solid' = 'solid'
   @Input() variant?: 'lighter' | 'light' | 'dark' | 'darker'
+  @Input() factor? : number;
   @Input() 
   public set closeable(val : string | boolean){
     this._closeable = (typeof(val) === 'string' || val === true) ? true : false;
@@ -33,15 +34,10 @@ export class ChipsComponent implements AfterViewInit, OnDestroy{
   onCloseChip(){
     this.isVisible = false;
     this.closeChip?.emit();
-    this.ngOnDestroy();
     this.el.nativeElement.remove();
   }
 
-  ngOnDestroy(): void {
-    
-  }
-
   ngAfterViewInit(): void {
-    this.styles.colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill, this.variant!));
+    this.styles.colors.addColors(createColorObject(this.bgcolor!, this.color!, this.fill, this.variant!, this.factor!));
   }
 }

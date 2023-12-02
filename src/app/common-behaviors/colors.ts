@@ -48,10 +48,10 @@ export class Colors{
                 color = val.color;
             break;
             case 'solid':
-                bgColor = val.variant ? applyVariant(val.color, val.variant) : val.color;
+                bgColor = val.variant ? applyVariant(val.color, val.variant, val.factor!) : val.color;
             break;
             default :
-                bgColor = val.variant ? applyVariant(val.color, val.variant) : val.color;
+                bgColor = val.variant ? applyVariant(val.color, val.variant, val.factor!) : val.color;
         }
         el.backgroundColor = bgColor;
         if (border) el.border = border;
