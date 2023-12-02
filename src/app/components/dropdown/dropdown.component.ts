@@ -49,6 +49,7 @@ _disabled: boolean = false;
 @Input() color? :  string;
 @Input() bgcolor? : string;
 @Input() fill :  'clear' | 'outline' | 'solid' = 'solid';
+@Input() type : 'text' | 'checkbox' | 'radio' = 'checkbox';
 selectedOptions: Array<DropdownItem>  = [];
 showMaximumSelectionError : boolean = false;
 enableSearch: boolean = false;
@@ -97,7 +98,7 @@ onChange = (_:any) => {};
 onTouch = () => {};
   
   constructor(
-    private el : ElementRef,
+    protected el : ElementRef,
     ) {
       this.styles  = new BaseClass( new Colors(el));  
     };

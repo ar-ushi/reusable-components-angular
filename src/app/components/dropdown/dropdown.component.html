@@ -27,7 +27,9 @@
         <section [hidden] = "!_config.defaultOpen"class="dropdown-data">
             <ul>
                 <li *ngFor="let item of data; let i = index;" (click)="clickOption($event,item); $event.stopPropagation()" class="item-checkbox">
-                  <input type=checkbox [attr.aria-label]="item" [checked] = "item.selected" [disabled]="disabled || item.disabled" />
+                  <ng-container *ngIf="type !=='text'">
+                    <input [type]="type" [attr.aria-label]="item" [checked] = "item.selected" [disabled]="disabled || item.disabled" />                  
+                  </ng-container>
                   <div class="flex-column">
                   <div class="dropdown-option">{{item.text}}</div>
                   <ng-container *ngIf="item.subtitle">
