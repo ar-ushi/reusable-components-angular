@@ -17,7 +17,7 @@ import { createColorObject } from 'src/app/common-behaviors/common';
 
 export class ButtonComponent implements AfterViewInit{
 
-@Input() buttonConfig : ButtonStyles = {
+_config : ButtonStyles = {
   width : '150px',
   height: '20px',
   fontSize : '10px',
@@ -42,7 +42,7 @@ onClickButton(event : any){
 @Input()
 public set config(obj : ButtonStyles){
   //only override defaults for value sent by parent
-  this.buttonConfig= {...this.buttonConfig, ...obj};
+  this._config= {...this._config, ...obj};
 }
 
 constructor(public _elementRef : ElementRef){  

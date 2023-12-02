@@ -70,7 +70,7 @@ set options(value : Array<any>){
 }
 
 @Input()
-public set ddconfig(obj : DropDownConfig){
+public set config(obj : DropDownConfig){
   //only override defaults for value sent by parent
   this._config= {...this._config, ...obj};
   if (this._config.multipleSelection){
