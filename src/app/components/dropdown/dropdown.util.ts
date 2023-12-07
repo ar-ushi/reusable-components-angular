@@ -18,15 +18,15 @@ export class DropdownItem {
     disabled? : boolean = false;
     [key: string] : any;
 
-    public constructor(obj : any, textKey: string = 'text') {
+    public constructor(obj : any) {
         if (typeof obj === 'string' || typeof obj === 'number'){
             this.id = this.text = obj;
             this.selected = false;
             this.disabled = false;
         }
         if (typeof obj === 'object'){
-            this.id = obj.id ? obj.id : obj[textKey];
             for (const key in obj){
+                this.id = obj.id || obj.text;
                 this[key] = obj[key];
             }
         }

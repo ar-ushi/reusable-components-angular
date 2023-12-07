@@ -50,13 +50,12 @@ _disabled: boolean = false;
 @Input() bgcolor? : string;
 @Input() fill :  'clear' | 'outline' | 'solid' = 'solid';
 @Input() type : 'text' | 'checkbox' | 'radio' = 'checkbox';
-@Input() optionlabel? : string = 'text';
-@Input() transformedData? : Array<any>;
+@Input() transformDataFn?: any;
 selectedOptions: Array<DropdownItem>  = [];
 showMaximumSelectionError : boolean = false;
 enableSearch: boolean = false;
 noResultsFoundErrorMsg: string = "";
-searchOverAPI : boolean = false;
+validDataPresent: boolean = true;
 
 @Input()
 set placeholder(value:string){
@@ -68,7 +67,7 @@ set options(value : Array<any>|string){
   if (typeof(value) === 'string'){
     this.data = value;
     this.originalData = value;
-    this.searchOverAPI = true;
+    this.validDataPresent = false;
   } else {
     this.data = value.map((item: any) => this.objectify(item));
     this.originalData = JSON.parse(JSON.stringify(this.data)); 
@@ -96,7 +95,6 @@ public set disabled(val : string | boolean){
 @Output() onSelect= new EventEmitter<DropdownItem>();
 @Output() onDeselect= new EventEmitter<string>();
 @Output() onCloseDropdown= new EventEmitter<string>();
-@Output() transformFilteredData = new EventEmitter<any>();
 
 //Function to call on change & touch 
 onChange = (_:any) => {};
@@ -129,33 +127,32 @@ onTouch = () => {};
         (child as HTMLElement).style.backgroundColor = 'inherit';
       }});
     //set dropdown list styles
-    const dropdownOptions = document.querySelector('.dropdown-data') as HTMLElement | null;
-    if (dropdownOptions){
-    dropdownOptions.style.cssText = `
+    (document.querySelector('.dropdown-data') as HTMLElement).style.cssText = `
     box-shadow: ${this._config.shadow};
     background-color: inherit;
     `;
   }
-  }
 
   //TODO - Test all Evt Emitters once
   getFilteredData(filteredDataList: any){
+    let transformedFilteredData;
     if (filteredDataList.length == 0){
       this.noResultsFoundErrorMsg= 'No results found. Modify your search';
       this.closeDropdown();
     } else {
       this.noResultsFoundErrorMsg = "";
-      if (this.searchOverAPI){ //search over api
-        this.transformFilteredData.emit({filteredDataList, transformedData : this.transformedData});
-        this.setFilteredDataAsOptions(this.transformedData)
+      if (typeof(this.originalData) === 'string'){ //search over api
+        transformedFilteredData = this.transformDataFn(filteredDataList);
+        this.setFilteredDataAsOptions(transformedFilteredData);
+        this.validDataPresent = true;
       }else{
         this.setFilteredDataAsOptions(filteredDataList)
       }
     }
   }
 
-  setFilteredDataAsOptions(list: any){
-    this.data =  this.objectify(list) //reinforce dropdown item
+  setFilteredDataAsOptions(list: Array<any>){
+    this.data = list.map((item: any) => this.objectify(item));    console.log(this.data);
     this.openDropdown();
   }
   clickOption($event:any, item:DropdownItem){
@@ -240,15 +237,7 @@ onTouch = () => {};
   }
 
   objectify(item : any){
- if (Array.isArray(item)){
-      let dropdownArray = [];
-      for (let index = 0; index < item.length; index++) {
-        dropdownArray.push(new DropdownItem(item));
-      }
-      return dropdownArray;
-    } else {
-      return new DropdownItem(item,this.optionlabel);
-    }
+      return new DropdownItem(item);
   }
 
   addDefaultOptiontoSelection(obj : Array<DropdownItem>){

@@ -1,12 +1,11 @@
 <div style='padding : 50px'>
     <app-select chips [options] = 'searchAPI'
-    bgcolor = 'green' fill="outline" optionlabel="label"
+    bgcolor = 'green' fill="outline"
     placeholder="Fruit List"
     (onSelect) = "onSelected($event)"
     [config] = "dropdownConfig"
-    [transformedData]="transformedData"
     type="text"
-    (transformFilteredData)="transformData($event)"
+    [transformDataFn]="transformData"
    > </app-select>
 </div>
 <div style="padding:50px" >

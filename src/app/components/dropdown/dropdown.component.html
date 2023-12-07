@@ -24,8 +24,8 @@
           </section>
       </button>
     </section>
-        <section *ngIf = "_config.defaultOpen || !searchOverAPI" class="dropdown-data">
-            <ul>
+        <div [hidden] = "!_config.defaultOpen" class="dropdown-data">
+            <ul *ngIf="validDataPresent">
                 <li *ngFor="let item of data; let i = index;" (click)="clickOption($event,item); $event.stopPropagation()" class="item-checkbox">
                   <ng-container *ngIf="type !=='text'">
                     <input [type]="type" [attr.aria-label]="item" [checked] = "item.selected" [disabled]="disabled || item.disabled" />                  
@@ -38,7 +38,7 @@
                 </div>
                 </li>
               </ul>
-        </section>
+          </div>
     </div>
   </div>
   <div [hidden]="!showMaximumSelectionError" class="error-msg">{{_config.maximumSelectionErrorMsg}}</div>

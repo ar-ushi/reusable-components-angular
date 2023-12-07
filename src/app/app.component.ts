@@ -46,7 +46,21 @@ export class AppComponent {
   }
 
   transformData(e: any){
-    console.log('im app', e);
-    this.transformedData = e.fruits;
+    let data =  [
+      {
+        text: 'Apple',
+        subtitle: 'So fresh',
+        disabled: 'true'
+      },
+      {
+        text: 'Berries',
+        subtitle: 'So yellow',
+      },
+      {
+        text: 'Berry',
+      subtitle: 'What a wow',
+      },
+    ]; 
+    return data;
   }
 }
