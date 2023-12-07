@@ -1,10 +1,12 @@
 <div style='padding : 50px'>
-    <app-select chips [options] = 'fruits'
-    bgcolor = 'green' fill="outline"
+    <app-select chips [options] = 'searchAPI'
+    bgcolor = 'green' fill="outline" optionlabel="label"
     placeholder="Fruit List"
     (onSelect) = "onSelected($event)"
     [config] = "dropdownConfig"
+    [transformedData]="transformedData"
     type="text"
+    (transformFilteredData)="transformData($event)"
    > </app-select>
 </div>
 <div style="padding:50px" >
@@ -13,3 +15,5 @@
         <app-chip bgcolor="blue" tooltip="ami" position="right">Hello</app-chip>
     </div>
 </div>
+
+<input autocomplete [searchData]="searchAPI" [minlength]=3  type = "text" [urlconfig]="searchAPIConfig" (transformFilteredData)="transformData($event)" />

@@ -1,0 +1,13 @@
+{
+    "/api/*": {
+      "target": "https://api-adresse.data.gouv.fr",
+      "secure": false,
+      "pathRewrite": {
+        "^/api": ""
+      },
+      "changeOrigin": true,
+      "logLevel": "debug",
+      "verbose" : true
+    }
+  }
+  

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { autocompleteAPIConfig } from './components/autocomplete/autocomplete.util';
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +9,15 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'client';
+  searchAPI= '/api/search/?q={value}';
+  transformedData:any;
+  searchAPIConfig : autocompleteAPIConfig = {
+    apiType : 'http',
+    httpMethod : 'get',
+    headers : new HttpHeaders({
+      'Content-Type': 'application/json',
+    })
+  }
   fruits: any = [
     {
       text: 'Apple',
@@ -34,4 +45,8 @@ export class AppComponent {
     console.log(val.subtitle);
   }
 
+  transformData(e: any){
+    console.log('im app', e);
+    this.transformedData = e.fruits;
+  }
 }

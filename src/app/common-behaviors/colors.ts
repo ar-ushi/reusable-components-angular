@@ -53,9 +53,11 @@ export class Colors{
             default :
                 bgColor = val.variant ? applyVariant(val.color, val.variant, val.factor!) : val.color;
         }
-        el.backgroundColor = bgColor;
+        el.backgroundColor = bgColor;                                                                       
         if (border) el.border = border;
         if (color)  el.color = color;
     }
 
 }
+
+//TODO - Fix Border Color Issue ---> colors class should use BorderColor prop, for dropdown inherit the border-color ~~~

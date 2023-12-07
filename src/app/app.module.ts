@@ -6,6 +6,7 @@ import { DropdownComponent } from './components/dropdown/dropdown.component';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from './components/button/button.component';
 import { ChipsComponent } from './components/chips/chips.component';
+import { autocompleteModule } from './components/autocomplete/autocomplete.module';
 
 @NgModule({
   declarations: [
@@ -18,8 +19,8 @@ import { ChipsComponent } from './components/chips/chips.component';
     ButtonComponent,
     ChipsComponent,
     FormsModule,
+    autocompleteModule
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

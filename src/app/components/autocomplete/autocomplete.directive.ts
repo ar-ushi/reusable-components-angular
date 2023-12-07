@@ -1,24 +1,29 @@
 import { Directive, EventEmitter, HostListener, Input, Output} from "@angular/core";
-import { keyCode } from "./autocomplete.util";
+import { autocompleteAPIConfig, keyCode } from "./autocomplete.util";
 import { debounceTime, distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
 import { Observable, of } from "rxjs";
+import { AutocompleteService } from "./autocomplete.service";
+import { HttpClientModule } from "@angular/common/http";
 
 
 @Directive({
     selector: '[autocomplete]',
-    standalone: true,
   })
 
   export class AutoCompleteDirective {
     @Input() searchData?: string | Array<any>  //data can be api url (search box) or a list (dropdown)
     @Output() filteredDataList = new EventEmitter<Array<any>>;
-    @Input() debounce = 300;
-    searchTerm : any;
+    @Input() minlength : number = 1;
+    @Input() debounce : number = 500;
+    @Input() urlconfig: autocompleteAPIConfig = {
+      apiType: 'http',
+      httpMethod : 'get', 
+    }
+    constructor(private UixAutoCompleteService : AutocompleteService){};
 
     @HostListener('keyup', ['$event'])
     onKeyUp(event: KeyboardEvent) {
-      this.searchTerm = ((event.target as HTMLInputElement).value);
-      if (event && event.target && this.validateCharKeyCode(event.key)) {
+      if (event && event.target) {
         this.showFilteredDataList(of(event));
       }
     }
@@ -27,6 +32,7 @@ import { Observable, of } from "rxjs";
       event.pipe(
         filter((e: KeyboardEvent) => this.validateCharKeyCode(e.key)),
         map((e: KeyboardEvent) => this.extractSearchTerm(e)),
+        filter((searchTerm: string) => searchTerm.length >= this.minlength),
         debounceTime(this.debounce),
         distinctUntilChanged(),
         switchMap((searchTerm : string) => {
@@ -36,8 +42,9 @@ import { Observable, of } from "rxjs";
           } else {
             if (searchTerm === "" && Array.isArray(this.searchData)){
               return of(this.searchData);
+            } else {
+              return this.filterDynamicData(searchTerm);
             }
-            return of([]);
           }
           })
       ).subscribe((filteredList) => {
@@ -48,6 +55,7 @@ import { Observable, of } from "rxjs";
   extractSearchTerm(e : KeyboardEvent){
     return (e.target as HTMLInputElement).value;
   }
+
   /* Used for Components which has a finite, manageable list of data already being called to the UI in an API call - e.g : Dropdown */ 
   filterStaticData(query : string){
     query = query.toLowerCase();
@@ -59,6 +67,10 @@ import { Observable, of } from "rxjs";
     return filteredList;
   };
   return;
+  }
+
+  filterDynamicData(query: string){
+    return this.UixAutoCompleteService.getFilteredData(this.urlconfig, (this.searchData as string), query);
   }
 
    validateCharKeyCode(key: string) : boolean{

@@ -11,7 +11,7 @@
             </ng-container>
             <ng-template #defaultClose>&times;</ng-template>
           </button>
-          <section [ngClass]="_chips ? 'chip-row' : 'selected-option-container'">
+          <section [hidden]="selectedOptions.length == 0"  [ngClass]="_chips ? 'chip-row' : 'selected-option-container'">
             <div *ngFor="let option of selectedOptions; let last= last">
               <ng-container *ngIf = "_chips">
                   <span chip closeable (closeChip)="removeSelectedOptions(option)">{{option.text}}</span>    
@@ -24,7 +24,7 @@
           </section>
       </button>
     </section>
-        <section [hidden] = "!_config.defaultOpen"class="dropdown-data">
+        <section *ngIf = "_config.defaultOpen || !searchOverAPI" class="dropdown-data">
             <ul>
                 <li *ngFor="let item of data; let i = index;" (click)="clickOption($event,item); $event.stopPropagation()" class="item-checkbox">
                   <ng-container *ngIf="type !=='text'">

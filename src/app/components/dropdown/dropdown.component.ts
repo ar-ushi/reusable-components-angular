@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, ElementRef, forwardRef,HostListener, AfterViewInit } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ChipsComponent } from '../chips/chips.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { DropDownConfig, DropdownItem } from './dropdown.util';
-import { AutoCompleteDirective } from '../autocomplete/autocomplete.directive';
+import { autocompleteModule } from '../autocomplete/autocomplete.module';
 import { ClickOutsideDirective } from '../clickOutside/click-outside.directive';
-import { ChipsComponent } from '../chips/chips.component';
-import { Colors} from 'src/app/common-behaviors/colors';
-import { createColorObject } from 'src/app/common-behaviors/common';
 import { BaseClass } from 'src/app/common-behaviors/base';
+import { Colors } from 'src/app/common-behaviors/colors';
+import { createColorObject } from 'src/app/common-behaviors/common';
 
-export const DropdownControlValueAccessor : any ={
+export const UixDropdownControlValueAccessor : any ={
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => DropdownComponent),
   multi: true
@@ -19,8 +19,8 @@ export const DropdownControlValueAccessor : any ={
 @Component({
   selector: 'app-select',
   standalone: true,
-  providers: [DropdownControlValueAccessor],
-  imports : [CommonModule, BrowserModule, FormsModule, AutoCompleteDirective,ClickOutsideDirective, ChipsComponent],
+  providers: [UixDropdownControlValueAccessor],
+  imports : [CommonModule, BrowserModule, FormsModule, autocompleteModule, ClickOutsideDirective, ChipsComponent],
   templateUrl: './dropdown.component.html',
   styleUrls: ['./dropdown.component.scss'],
 })
@@ -30,8 +30,8 @@ export class DropdownComponent implements ControlValueAccessor, AfterViewInit{
   data --> used to set & can be manipulated for search
   originalData --> deep copy of data array for restoring values
 */
-data : Array<any> = []; 
-originalData : Array<any> = [];
+data : any;
+originalData : any; //TODO - Better way to do L33 and L34
 _placeholder:string = 'Select';
 private styles : BaseClass;
 _config: DropDownConfig = {
@@ -50,10 +50,13 @@ _disabled: boolean = false;
 @Input() bgcolor? : string;
 @Input() fill :  'clear' | 'outline' | 'solid' = 'solid';
 @Input() type : 'text' | 'checkbox' | 'radio' = 'checkbox';
+@Input() optionlabel? : string = 'text';
+@Input() transformedData? : Array<any>;
 selectedOptions: Array<DropdownItem>  = [];
 showMaximumSelectionError : boolean = false;
 enableSearch: boolean = false;
 noResultsFoundErrorMsg: string = "";
+searchOverAPI : boolean = false;
 
 @Input()
 set placeholder(value:string){
@@ -61,14 +64,15 @@ set placeholder(value:string){
 }
 
 @Input()
-set options(value : Array<any>){
-  if (!value){
-    this.data = [];
+set options(value : Array<any>|string){
+  if (typeof(value) === 'string'){
+    this.data = value;
+    this.originalData = value;
+    this.searchOverAPI = true;
   } else {
-    this.data = value.map((item: any) => this.objectify(item))
-  }
-  this.originalData = JSON.parse(JSON.stringify(this.data));
-}
+    this.data = value.map((item: any) => this.objectify(item));
+    this.originalData = JSON.parse(JSON.stringify(this.data)); 
+  }}
 
 @Input()
 public set config(obj : DropDownConfig){
@@ -92,13 +96,14 @@ public set disabled(val : string | boolean){
 @Output() onSelect= new EventEmitter<DropdownItem>();
 @Output() onDeselect= new EventEmitter<string>();
 @Output() onCloseDropdown= new EventEmitter<string>();
+@Output() transformFilteredData = new EventEmitter<any>();
 
 //Function to call on change & touch 
 onChange = (_:any) => {};
 onTouch = () => {};
   
   constructor(
-    protected el : ElementRef,
+    private el : ElementRef,
     ) {
       this.styles  = new BaseClass( new Colors(el));  
     };
@@ -124,23 +129,35 @@ onTouch = () => {};
         (child as HTMLElement).style.backgroundColor = 'inherit';
       }});
     //set dropdown list styles
-    (document.getElementsByClassName('dropdown-data').item(0) as HTMLElement).style.cssText = `
+    const dropdownOptions = document.querySelector('.dropdown-data') as HTMLElement | null;
+    if (dropdownOptions){
+    dropdownOptions.style.cssText = `
     box-shadow: ${this._config.shadow};
     background-color: inherit;
     `;
   }
+  }
 
-  getFilteredData(filteredDataList: Array<any>){
-    this.data = [...filteredDataList];
+  //TODO - Test all Evt Emitters once
+  getFilteredData(filteredDataList: any){
     if (filteredDataList.length == 0){
       this.noResultsFoundErrorMsg= 'No results found. Modify your search';
       this.closeDropdown();
     } else {
       this.noResultsFoundErrorMsg = "";
-      this.openDropdown();
+      if (this.searchOverAPI){ //search over api
+        this.transformFilteredData.emit({filteredDataList, transformedData : this.transformedData});
+        this.setFilteredDataAsOptions(this.transformedData)
+      }else{
+        this.setFilteredDataAsOptions(filteredDataList)
+      }
     }
   }
 
+  setFilteredDataAsOptions(list: any){
+    this.data =  this.objectify(list) //reinforce dropdown item
+    this.openDropdown();
+  }
   clickOption($event:any, item:DropdownItem){
     //two scenarios - handle select/unselect
     if (this._disabled || item.disabled){
@@ -203,7 +220,9 @@ onTouch = () => {};
     //only allow toggledropdown if search not initiated
     if (this._disabled) return;
     //maintain a state for dropdown close vs dropdown open
+    if (typeof(this.data) !== 'string'){
     this._config.defaultOpen = !this._config.defaultOpen;
+    }
     if(!this._config.defaultOpen){
       this.onCloseDropdown.emit();
     }
@@ -215,16 +234,26 @@ onTouch = () => {};
   }
 
   openDropdown(){
+    if (typeof(this.data) !== 'string'){
     this._config.defaultOpen = true;
+    }
   }
 
   objectify(item : any){
-    return new DropdownItem(item);
+ if (Array.isArray(item)){
+      let dropdownArray = [];
+      for (let index = 0; index < item.length; index++) {
+        dropdownArray.push(new DropdownItem(item));
+      }
+      return dropdownArray;
+    } else {
+      return new DropdownItem(item,this.optionlabel);
+    }
   }
 
   addDefaultOptiontoSelection(obj : Array<DropdownItem>){
     const parentValueIds = obj.map((item) => item.id);
-    this.data.forEach((item) => {
+    this.data.forEach((item: DropdownItem) => {
       for (const i in parentValueIds){
         const val = parentValueIds[i];
         if (item.id == val){
@@ -237,7 +266,7 @@ onTouch = () => {};
 
   isASubSetof(obj : Array<DropdownItem>){
     const isSubSet = obj.every((objItem : any) => 
-    this.data.some(dataItem => 
+    this.data.some((dataItem: DropdownItem) => 
       this.deepCompareTwoObjects(objItem, dataItem)));
       return isSubSet;
   }
@@ -266,7 +295,7 @@ onTouch = () => {};
         }
       } else {
         obj = this.objectify(obj);
-        this.data.find(val => {
+        this.data.find((val: DropdownItem) => {
           if (val.id == obj.id){
             this.selectedOptions.push(val);
           }
