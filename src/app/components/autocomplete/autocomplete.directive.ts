@@ -1,25 +1,32 @@
-import { Directive, EventEmitter, HostListener, Input, Output} from "@angular/core";
+import { Directive, EventEmitter, HostListener, Input, OnInit, Output} from "@angular/core";
 import { autocompleteAPIConfig, keyCode } from "./autocomplete.util";
 import { debounceTime, distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
 import { Observable, of } from "rxjs";
 import { AutocompleteService } from "./autocomplete.service";
-import { HttpClientModule } from "@angular/common/http";
+import { CacheService } from "src/app/common-behaviors/cache/cache.service";
 
 
 @Directive({
     selector: '[autocomplete]',
   })
 
-  export class AutoCompleteDirective {
+  export class AutoCompleteDirective implements OnInit{
     @Input() searchData?: string | Array<any>  //data can be api url (search box) or a list (dropdown)
     @Output() filteredDataList = new EventEmitter<Array<any>>;
     @Input() minlength : number = 1;
     @Input() debounce : number = 500;
+    @Input() cachecapacity?: number; //if cache capacity passed in assume caching allowed
     @Input() urlconfig: autocompleteAPIConfig = {
       apiType: 'http',
       httpMethod : 'get', 
     }
-    constructor(private UixAutoCompleteService : AutocompleteService){};
+    constructor(private UixAutoCompleteService : AutocompleteService, private cacheService: CacheService<any>){};
+
+    ngOnInit(){
+      if (this.cachecapacity){
+        this.cacheService.setCapacity(this.cachecapacity);
+      }
+    }
 
     @HostListener('keyup', ['$event'])
     onKeyUp(event: KeyboardEvent) {
@@ -36,16 +43,14 @@ import { HttpClientModule } from "@angular/common/http";
         debounceTime(this.debounce),
         distinctUntilChanged(),
         switchMap((searchTerm : string) => {
-          if (Array.isArray(this.searchData)){
-          const filteredData = this.filterStaticData(searchTerm);
-            return of(filteredData);
-          } else {
-            if (searchTerm === "" && Array.isArray(this.searchData)){
-              return of(this.searchData);
-            } else {
-              return this.filterDynamicData(searchTerm);
+          if (this.cachecapacity){
+            const cachedResult = this.cacheService.get(searchTerm); //checking if result already cached;
+            if (cachedResult){
+              return of(cachedResult);
             }
           }
+          return this.fetchFilteredData(searchTerm);
+          //data not found in cache/cache not enabled - proceed with api request
           })
       ).subscribe((filteredList) => {
         this.filteredDataList.emit(filteredList!);
@@ -54,6 +59,21 @@ import { HttpClientModule } from "@angular/common/http";
     
   extractSearchTerm(e : KeyboardEvent){
     return (e.target as HTMLInputElement).value;
+  }
+
+  fetchFilteredData(query: string){
+    let filteredData;
+      if (Array.isArray(this.searchData)){
+        filteredData = of(this.filterStaticData(query))
+      } else if (query === "" && Array.isArray(this.searchData)){
+        filteredData = of(this.searchData);
+      } else{
+        filteredData =  this.filterDynamicData(query)
+      }
+    if (this.cachecapacity){
+      this.cacheService.save(query, filteredData);
+    }
+    return filteredData;
   }
 
   /* Used for Components which has a finite, manageable list of data already being called to the UI in an API call - e.g : Dropdown */ 

@@ -43,6 +43,7 @@ _config: DropDownConfig = {
   limitSelection: 1,
   maximumSelectionErrorMsg : 'Maximum allowed selections exceeded.',
   allowSearch: false,
+  allowCachingResults: false,
 }
 _chips: boolean = false;
 _disabled: boolean = false;

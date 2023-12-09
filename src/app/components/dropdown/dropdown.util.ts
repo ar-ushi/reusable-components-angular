@@ -8,6 +8,8 @@ export interface DropDownConfig{
     limitSelection?:number;
     maximumSelectionErrorMsg: string;
     allowSearch: boolean;
+    allowCachingResults: boolean;
+    maximumResultsToCache?: number;
 }
 
 export class DropdownItem {
