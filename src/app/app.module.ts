@@ -7,6 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from './components/button/button.component';
 import { ChipsComponent } from './components/chips/chips.component';
 import { autocompleteModule } from './components/autocomplete/autocomplete.module';
+import { TabsComponent } from './components/tabs/tabs.component';
+import { TabComponent } from './components/tabs/tab.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { autocompleteModule } from './components/autocomplete/autocomplete.modul
     ButtonComponent,
     ChipsComponent,
     FormsModule,
-    autocompleteModule
+    autocompleteModule,
+    TabsComponent,
+    TabComponent
   ],
   bootstrap: [AppComponent]
 })

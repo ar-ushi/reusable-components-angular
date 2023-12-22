@@ -49,8 +49,8 @@ import { CacheService } from "src/app/common-behaviors/cache/cache.service";
               return of(cachedResult);
             }
           }
-          return this.fetchFilteredData(searchTerm);
           //data not found in cache/cache not enabled - proceed with api request
+          return this.fetchFilteredData(searchTerm);
           })
       ).subscribe((filteredList) => {
         this.filteredDataList.emit(filteredList!);
